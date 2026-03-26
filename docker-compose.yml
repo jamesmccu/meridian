@@ -1,0 +1,94 @@
+services:
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./certs:/certs:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "17280:7280"
+      - "13000:3000"
+      - "26686:16686"
+      - "19093:9093"
+    depends_on:
+      - quickwit
+
+  vault:
+    image: hashicorp/vault:latest
+    cap_add: [IPC_LOCK]
+    volumes:
+      - ./certs:/certs:ro
+      - ./vault/config:/vault/config:ro
+      - ./data/vault:/vault/data
+    command: vault server -config=/vault/config/vault.hcl
+    environment:
+      VAULT_ADDR: https://vault.meridian.local:8200
+      VAULT_CACERT: /certs/rootCA.pem
+    ports:
+      - "8201:8200"
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    volumes:
+      - ./certs:/certs:ro
+      - ./node-exporter/web.yml:/etc/node_exporter/web.yml:ro
+    command:
+      - --web.config.file=/etc/node_exporter/web.yml
+
+  victoriametrics:
+    image: victoriametrics/victoria-metrics:latest
+    volumes:
+      - ./certs:/certs:ro
+      - ./prometheus.yml:/prometheus.yml:ro
+      - ./data/victoriametrics:/storage
+    command:
+      - --promscrape.config=/prometheus.yml
+      - --storageDataPath=/storage
+      - --tls
+      - --tlsCertFile=/certs/meridian.local.pem
+      - --tlsKeyFile=/certs/meridian.local-key.pem
+    ports:
+      - "18428:8428"
+
+  fluent-bit:
+    image: fluent/fluent-bit:latest
+    volumes:
+      - ./certs:/certs:ro
+      - ./fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
+      - /var/log:/var/log:ro
+    depends_on:
+      - vector
+
+  vector:
+    image: timberio/vector:latest-alpine
+    volumes:
+      - ./certs:/certs:ro
+      - ./vector/vector.yaml:/etc/vector/vector.yaml:ro
+    command: ["--config", "/etc/vector/vector.yaml"]
+    depends_on:
+      - quickwit
+
+  quickwit:
+    image: quickwit/quickwit:latest
+    command: ["run", "--config", "/quickwit/config/quickwit.yaml"]
+    volumes:
+      - ./certs:/certs:ro
+      - ./data/quickwit:/quickwit/qwdata
+      - ./quickwit.yaml:/quickwit/config/quickwit.yaml:ro
+    environment:
+      QW_ENABLE_OPENTELEMETRY_OTLP_EXPORTER: "true"
+
+  mongo:
+    image: mongo:7
+    volumes:
+      - ./certs:/certs:ro
+      - ./data/mongo:/data/db
+    command: >
+      mongod
+      --tlsMode requireTLS
+      --tlsCertificateKeyFile /certs/meridian.local-combined.pem
+      --tlsCAFile /certs/rootCA.pem
+    ports:
+      - "37017:27017"
+    environment:
+      VAULT_ADDR: https://vault.meridian.local:8200
+      VAULT_CACERT: /certs/rootCA.pem

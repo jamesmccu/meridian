@@ -1,0 +1,26 @@
+sources:
+  fluent_in:
+    type: fluent
+    address: 0.0.0.0:24224
+    tls:
+      enabled:  true
+      ca_file:  /certs/rootCA.pem
+      crt_file: /certs/meridian.local.pem
+      key_file: /certs/meridian.local-key.pem
+
+sinks:
+  quickwit_out:
+    type: http
+    inputs: [fluent_in]
+    uri: https://nginx:7280/api/v1/meridian-logs/ingest
+    encoding:
+      codec: json
+    tls:
+      ca_file: /certs/rootCA.pem
+    request:
+      headers:
+        content-type: application/json
+    buffer:
+      type: disk
+      max_size: 268435488
+      when_full: drop_newest

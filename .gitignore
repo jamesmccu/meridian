@@ -1,0 +1,12 @@
+
+# Private key material — never commit
+certs/
+
+# Runtime data directories
+data/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
