@@ -178,16 +178,15 @@ vault operator unseal  # run twice with two of your three unseal keys
 
 | Phase | Description | Status |
 |-------|-------------|--------|
-| 0 | TLS foundation, cert-manager, Traefik, Linkerd | ✅ Complete |
-| 1 | Core observability pipeline (Fluent Bit → Vector → Quickwit → VM → Grafana) | 🔄 In progress |
-| 2 | Python tooling (5 tools, senior patterns) | 🔄 In progress |
-| 3 | MongoDB Atlas context service | 📋 Planned |
-| 4 | Cloud targets (EKS + AKS) | 📋 Planned |
-| 5 | Heimdall MDR stack (Wazuh, Suricata, MISP, TheHive) | 📋 Planned |
+| 1 | TLS foundation, cert-manager, Traefik, Linkerd | ✅ Complete |
+| 2 | Core observability pipeline (Fluent Bit → Vector → Quickwit → VM → Grafana) | 🔄 In progress |
+| 3 | Python tooling (5 tools, senior patterns) | 🔄 In progress |
+| 4 | MongoDB Atlas context service | 📋 Planned |
+| 5 | Cloud targets (EKS + AKS) | 📋 Planned |
+| 6 | Heimdall MDR stack (Wazuh, Suricata, MISP, TheHive) | 📋 Planned |
 
 ---
 
 ## Author
 
-James McCulley — Senior SRE / Security SRE  
-6 years infrastructure experience across AWS and Azure, most recently at Atlassian (cloud security, observability pipelines, incident response at scale).
+James McCulley — Senior SRE
