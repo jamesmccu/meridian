@@ -1,9 +1,15 @@
-
 # Private key material — never commit
 certs/
+**/certs/
+*.pem
+*.key
+*.csr
+*.srl
 
 # Runtime data directories
 data/
+onprem/data/
+**/data/
 
 # Python
 .venv/
