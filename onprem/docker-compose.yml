@@ -1,6 +1,7 @@
 services:
   nginx:
     image: nginx:alpine
+    mem_limit: 32m
     volumes:
       - ./certs:/certs:ro
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
@@ -23,11 +24,13 @@ services:
     environment:
       VAULT_ADDR: https://vault.meridian.local:8200
       VAULT_CACERT: /certs/rootCA.pem
+      SKIP_CHOWN: "true"
     ports:
       - "8201:8200"
 
   node-exporter:
     image: prom/node-exporter:latest
+    mem_limit: 32m
     volumes:
       - ./certs:/certs:ro
       - ./node-exporter/web.yml:/etc/node_exporter/web.yml:ro
@@ -36,6 +39,7 @@ services:
 
   victoriametrics:
     image: victoriametrics/victoria-metrics:latest
+    mem_limit: 128m
     volumes:
       - ./certs:/certs:ro
       - ./prometheus.yml:/prometheus.yml:ro
@@ -51,6 +55,7 @@ services:
 
   fluent-bit:
     image: fluent/fluent-bit:latest
+    mem_limit: 64m
     volumes:
       - ./certs:/certs:ro
       - ./fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
@@ -60,6 +65,7 @@ services:
 
   vector:
     image: timberio/vector:latest-alpine
+    mem_limit: 64m
     volumes:
       - ./certs:/certs:ro
       - ./vector/vector.yaml:/etc/vector/vector.yaml:ro
@@ -69,6 +75,7 @@ services:
 
   quickwit:
     image: quickwit/quickwit:latest
+    mem_limit: 128m
     command: ["run", "--config", "/quickwit/config/quickwit.yaml"]
     volumes:
       - ./certs:/certs:ro
@@ -79,6 +86,7 @@ services:
 
   mongo:
     image: mongo:7
+    mem_limit: 192m
     volumes:
       - ./certs:/certs:ro
       - ./data/mongo:/data/db
