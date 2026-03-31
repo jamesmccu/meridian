@@ -75,14 +75,11 @@ services:
 
   quickwit:
     image: quickwit/quickwit:latest
-    mem_limit: 128m
-    command: ["run", "--config", "/quickwit/config/quickwit.yaml"]
+    command: run --config /quickwit/config/quickwit.yaml
     volumes:
       - ./certs:/certs:ro
       - ./data/quickwit:/quickwit/qwdata
       - ./quickwit.yaml:/quickwit/config/quickwit.yaml:ro
-    environment:
-      QW_ENABLE_OPENTELEMETRY_OTLP_EXPORTER: "true"
 
   mongo:
     image: mongo:7
