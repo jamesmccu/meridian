@@ -5,6 +5,7 @@ Verifies that defaults are correct and that environment variables
 override them when set.
 """
 import os
+
 from meridian_core.config import get_config
 
 
