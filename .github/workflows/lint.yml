@@ -5,5 +5,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        env:
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      - name: Check for Python files
+        id: check
+        run: |
+          count=$(find tools/ -name "*.py" | wc -l)
+          echo "count=$count" >> $GITHUB_OUTPUT
       - name: Lint Python
+        if: steps.check.outputs.count > 0
         run: pip install ruff && ruff check tools/
+      - name: Skip lint
+        if: steps.check.outputs.count == 0
+        run: echo "No Python files in tools/ — skipping lint"
