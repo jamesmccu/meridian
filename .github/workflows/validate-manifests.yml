@@ -1,0 +1,15 @@
+name: Validate Manifests
+on: [push, pull_request]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate YAML
+        run: |
+          find . -name "*.yaml" -o -name "*.yml" | xargs python3 -c "
+          import sys, yaml
+          for f in sys.argv[1:]:
+              yaml.safe_load(open(f))
+          print('All manifests valid')
+          "
