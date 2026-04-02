@@ -1,155 +1,143 @@
-# Meridian
+# Meridian Software — SRE Platform
 
-**Multi-cloud observability and security platform — actively under construction.**
+A portfolio-grade SRE platform built to production standards. Meridian Software's primary product is **StageGrid** — a live events ticketing platform — running across a multi-cloud, multi-cluster Kubernetes environment with full observability, security, and identity management.
 
-Meridian is a portfolio project documenting the design and build of a production-grade SRE platform across AWS, GCP, Azure, and on-premises infrastructure. This README reflects the intended architecture. See the [Status](#status) section for what's actually running.
-
-The goal is intentional cloud placement — each provider used for its genuine strengths rather than duplicating the same stack everywhere.
+> Built by [James McCulley](https://jamesmcculley.dev) — Senior SRE  
+> GitHub: [github.com/jamesmcculley](https://github.com/jamesmcculley)
 
 ---
 
-## Intended Architecture
+## Why This Project Exists
 
-### Design Philosophy
+Most portfolio infrastructure projects deploy a generic app and call it done. This one is different. Meridian is built to answer a specific question: *what does a senior SRE's platform actually look like when it's designed for real operational complexity?*
 
-Every service is planned to live where it does for a specific reason. Multi-cloud is an architectural decision, not a checkbox.
+StageGrid's traffic profile — sharp on-sale spikes, high checkout criticality, async notification fanout — forces real decisions about autoscaling, SLO design, failure domain isolation, and chaos engineering. Every tool in this stack earned its place.
 
-| Plane | Provider | Rationale |
+---
+
+## Architecture Overview
+
+**Meridian Software** is the fictional company. **StageGrid** is the product — a live events ticketing and infrastructure platform. The Meridian Platform is the SRE layer that runs it.
+
+### Infrastructure
+
+| Cluster | Provider | Runtime | Role |
+|---|---|---|---|
+| meridian-onprem | On-premises (MacBook Pro) | k3s / OrbStack | FreeIPA, Vault, dev workloads |
+| meridian-aws | AWS | EKS | Primary StageGrid production workloads |
+| meridian-azure | Azure | AKS | Secondary region, DR, chaos targets |
+
+Clusters are connected via **Tailscale** mesh VPN. **Linkerd** provides mTLS and traffic observability within each cluster.
+
+### StageGrid Services
+
+| Service | Responsibility | SLO |
 |---|---|---|
-| Security & Secrets | AWS | KMS auto-unseal, IAM auth, GuardDuty |
-| Observability | GCP | Permanently free compute, excellent data networking |
-| Identity & GitOps | Azure | Entra ID Workload Identity, enterprise change management |
-| Edge / Dev | On-prem (k3s) | Constrained environment simulation, zero cloud cost |
+| stagegrid-tickets | Seat reservation & checkout (Python, Redis, Postgres) | 99.9% |
+| stagegrid-catalog | Event & venue browse (Python, Postgres, Redis cache) | 99.5% |
+| stagegrid-notify | Fan notification fanout (Python, async queue) | 99.0% |
+| stagegrid-identity | Auth & access control (Python, FreeIPA, Okta OIDC) | 99.9% |
+| stagegrid-loadgen | Synthetic traffic generation (Python, configurable profiles) | — |
 
-### Cluster Strategy
+### Observability Stack
 
-Managed Kubernetes (EKS/GKE/AKS) is intentionally avoided to keep lab costs under $10/month. Each cloud node will run k3s on a single VM — a deliberate cost optimization that mirrors what a cost-conscious team would do for non-production workloads. Production deployment notes are documented per-component in `docs/ARCHITECTURE.md`.
+| Pillar | Tool |
+|---|---|
+| Metrics | VictoriaMetrics |
+| Logs | Quickwit |
+| Traces | Jaeger |
+| Collection | Fluent Bit + Vector |
+| Instrumentation | OpenTelemetry |
 
----
+### Security Stack
 
-## Planned Stack
+- **Falco** (eBPF) — runtime syscall monitoring and anomaly detection
+- **OPA / Gatekeeper** — Kubernetes admission control policies
+- **Trivy** — container image vulnerability scanning in the ArgoCD pipeline
+- **HashiCorp Vault** — secrets management, PKI, short-lived credentials
+- **Linkerd mTLS** — encrypted, authenticated service-to-service communication
 
-### AWS — Security Plane
+### Identity & Access Management
 
-- **Vault** — KMS auto-unseal, IAM auth backend (zero static credentials)
-- **Falco** — runtime threat detection via eBPF
-- **OPA/Gatekeeper** — policy enforcement across all clusters
-- **Trivy** — container image scanning in CI
-- **GuardDuty** — findings routed via EventBridge → `alert-router`
-- **ECR** — container registry
+A layered identity model separating end-user, operator, and platform identity planes:
 
-Infrastructure target: k3s on EC2 t3.micro (~$8/mo, stopped when idle)
+| Layer | Provider | Scope |
+|---|---|---|
+| End users | Okta OIDC | StageGrid fan authentication |
+| Operators | Okta OIDC / SAML | Internal admin portal |
+| Unix / infrastructure | FreeIPA | SSH, sudo, host enrollment, LDAP |
+| Secrets | HashiCorp Vault | Service credentials, PKI, TLS |
 
-### GCP — Observability Plane
+FreeIPA provides centralized Unix identity management for all on-premises infrastructure — host enrollment, SSH key management, sudo policy via HBAC rules, and LDAP directory services. This is the on-prem analog to enterprise PAM platforms (Delinea Server Suite, Centrify AD Bridging).
 
-- **VictoriaMetrics** — long-term metrics storage, scraping all three clouds
-- **Quickwit** — cost-optimized log indexing and search
-- **Grafana** — single pane of glass, federating data from all providers
-- **Fluent Bit / Vector** — log shipping from all clusters
-- **OpenTelemetry Collector** — trace aggregation
+### GitOps & Deployment
 
-Infrastructure target: e2-micro (permanently free in us-central1)
-
-### Azure — Identity & GitOps Plane
-
-- **Entra ID** — Workload Identity Federation, OIDC-based, no long-lived credentials
-- **ArgoCD** — GitOps controller managing deployments across all three clusters
-- **Linkerd** — service mesh with mTLS
-- **Compliance dashboards** — SOC2/PCI-DSS control mapping
-
-Infrastructure target: k3s on B1s VM (free for 12 months)
-
-### On-Prem — Edge / Dev Plane
-
-- **k3s** via OrbStack on MacBook Pro ← *starting here*
-- **Jaeger** — distributed tracing UI
-- **OpenTelemetry Collector** — local aggregation before shipping to GCP
-- **canary-analyzer** — cross-cloud canary deployment and analysis
+**ArgoCD** manages all cluster state. Every manifest, Helm values file, and OPA policy is version-controlled in this repository. No manual kubectl applies in production.
 
 ---
 
 ## Python Tooling
 
-Planned tooling written in stdlib-preferred Python. Each tool will be written without AI assistance.
+All platform tooling is written in Python, built without AI assistance, and lives in `/tools`.
 
-| Tool | Purpose |
+| Tool | Description |
 |---|---|
-| `meridian-core` | Shared config, auth helpers, cloud client abstractions |
-| `logparse` | Log ingestion and normalization across providers |
-| `py-exporter` | Custom Prometheus exporter for platform metrics |
-| `alert-router` | Routes GuardDuty/Falco alerts to appropriate channels |
-| `atlas-ops` | Operational runbook automation |
-| `canary-analyzer` | Cross-cloud canary deployment and analysis |
-
----
-
-## Security Goals
-
-The target security posture: no long-lived credentials anywhere in the system.
-
-- **AWS** — EC2 instance role only. Vault uses KMS auto-unseal + IAM auth.
-- **GCP** — Workload Identity. No service account key files on disk.
-- **Azure** — Workload Identity Federation via Entra ID OIDC.
-- **Vault** — secrets authority. All dynamic credentials issued here with short TTLs.
-
----
-
-## Target Cost
-
-| Component | Monthly Cost |
-|---|---|
-| GCP e2-micro | Free (permanent) |
-| Azure B1s | Free (12 months) |
-| AWS t3.micro (on-demand, stopped when idle) | ~$0–8 |
-| OrbStack | Free |
-| **Total** | **< $10/mo** |
+| `meridian-core` | Shared library: config, logging, Vault client, service discovery |
+| `logparse` | Log parsing and structured event extraction from Quickwit |
+| `py-exporter` | Custom VictoriaMetrics exporter for StageGrid business metrics |
+| `alert-router` | Alert routing and enrichment; integrates with VictoriaMetrics alertmanager |
+| `atlas-ops` | Operational automation: node drain, certificate rotation, chaos experiments |
+| `canary-analyzer` | Automated canary analysis using VictoriaMetrics metrics |
 
 ---
 
 ## Repository Structure
 
 ```
-MERIDIAN/
-├── aws/                  # Terraform, Vault config, Falco rules
-├── gcp/                  # VictoriaMetrics, Quickwit, Grafana
-├── azure/                # ArgoCD, Linkerd, Entra ID config
-├── onprem/               # k3s manifests, Jaeger, OTel
-├── python/
-│   ├── meridian-core/
-│   ├── logparse/
-│   ├── py-exporter/
-│   ├── alert-router/
-│   ├── atlas-ops/
-│   └── canary-analyzer/
-├── dashboards/           # Grafana dashboard JSON
-├── compliance/           # SOC2/PCI-DSS control mappings
-├── docs/
-│   ├── ARCHITECTURE.md
-│   ├── OPERATIONS.md
-│   └── TROUBLESHOOTING.md
-└── README.md
+/
+├── README.md
+├── OPERATIONS.md          # Internal — operational runbooks and procedures
+├── TROUBLESHOOTING.md     # Internal — break/fix patterns and known issues
+├── platform/              # Shared infrastructure: ArgoCD, Vault, Linkerd, Tailscale
+├── clusters/              # Per-cluster Helm values and kustomize overlays
+│   ├── onprem/
+│   ├── aws/
+│   └── azure/
+├── services/              # StageGrid microservices
+│   ├── stagegrid-tickets/
+│   ├── stagegrid-catalog/
+│   ├── stagegrid-notify/
+│   ├── stagegrid-identity/
+│   └── stagegrid-loadgen/
+├── identity/              # FreeIPA manifests, Ansible host enrollment, Okta config
+├── observability/         # VictoriaMetrics, Quickwit, Jaeger, Fluent Bit, Vector
+├── security/              # Falco rules, OPA policies, Trivy pipeline config
+└── tools/                 # Python tooling ecosystem
 ```
 
 ---
 
-## Status
+## SLO Design
 
-Build is in progress. Starting with on-prem k3s and working outward.
+SLOs are defined for each StageGrid service and tracked in VictoriaMetrics. Burn rate alerting fires at 1-hour and 6-hour windows.
 
-| Component | Status |
-|---|---|
-| On-prem k3s (OrbStack) | 🟡 In progress |
-| Python tooling (meridian-core, logparse) | 🟡 In progress |
-| GCP observability plane | 🔲 Planned |
-| AWS security plane | 🔲 Planned |
-| Azure identity/GitOps plane | 🔲 Planned |
-| Grafana dashboards | 🔲 Planned |
-| Compliance mapping | 🔲 Planned |
-
-Architecture decisions and rationale are documented ahead of implementation in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+| Service | Target | 30-Day Error Budget |
+|---|---|---|
+| stagegrid-tickets | 99.9% availability | 43.2 minutes |
+| stagegrid-catalog | 99.5% availability | 3.6 hours |
+| stagegrid-notify | 99.0% availability | 7.2 hours |
+| stagegrid-identity | 99.9% availability | 43.2 minutes |
 
 ---
 
-## Author
+## Compliance
 
-James McCulley — [jamesmcculley.dev](https://jamesmcculley.dev) · [github.com/jamesmcculley](https://github.com/jamesmcculley)
+- **PCI-DSS** — stagegrid-tickets is PCI-scoped. Vault manages credentials with short-lived leases and full audit logging. Network policies isolate PCI workloads to dedicated namespaces.
+- **SOC2 Type II** — Access control, audit logging, and change management controls mapped across the platform.
+
+---
+
+## Contact
+
+**James McCulley** — Senior Site Reliability Engineer  
+[jamesmcculley.dev](https://jamesmcculley.dev) · [github.com/jamesmcculley](https://github.com/jamesmcculley)
