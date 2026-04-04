@@ -141,3 +141,30 @@ SLOs are defined for each StageGrid service and tracked in VictoriaMetrics. Burn
 
 **James McCulley** — Senior Site Reliability Engineer  
 [jamesmcculley.dev](https://jamesmcculley.dev) · [github.com/jamesmcculley](https://github.com/jamesmcculley)
+
+
+
+## Current Status
+
+> Last updated: April 2026
+
+### ✅ Running
+- **Vault** — initialized and unsealed (AWS KMS auto-unseal), accessible on 
+- **VictoriaMetrics** — deployed, ingesting metrics via Node Exporter
+- **Quickwit** — deployed for log indexing
+- **Vector / Fluent Bit** — log pipeline configured
+- **Nginx** — reverse proxy in place
+- **MongoDB** — running on EC2
+
+### 🔧 In Progress
+- Falco (runtime security) — deploying
+- ArgoCD (GitOps) — configuring on Azure
+- Linkerd (service mesh) — planned
+
+### ☁️ Planes
+| Plane | Cloud | Role |
+|---|---|---|
+| Security | AWS | Vault, Falco, GuardDuty, OPA |
+| Observability | GCP | VictoriaMetrics, Quickwit, Grafana |
+| Identity/GitOps | Azure | Entra ID, ArgoCD, Linkerd |
+| Edge | On-prem k3s | Legacy baseline simulation |
