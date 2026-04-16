@@ -31,13 +31,15 @@ Clusters are connected via **Tailscale** mesh VPN. **Linkerd** provides mTLS and
 
 ### StageGrid Services
 
-| Service | Responsibility | SLO |
-|---|---|---|
-| stagegrid-tickets | Seat reservation & checkout (Python, Redis, Postgres) | 99.9% |
-| stagegrid-catalog | Event & venue browse (Python, Postgres, Redis cache) | 99.5% |
-| stagegrid-notify | Fan notification fanout (Python, async queue) | 99.0% |
-| stagegrid-identity | Auth & access control (Python, FreeIPA, Okta OIDC) | 99.9% |
-| stagegrid-loadgen | Synthetic traffic generation (Python, configurable profiles) | — |
+StageGrid's service architecture covers five bounded domains. The first service to be implemented is `stagegrid-tickets` — a Python/FastAPI application handling seat reservation and checkout, instrumented with OpenTelemetry for distributed tracing. The remaining four services are planned and will follow.
+
+| Service | Responsibility | SLO target | Status |
+|---|---|---|---|
+| stagegrid-tickets | Seat reservation and checkout | 99.9% | Building next |
+| stagegrid-catalog | Event and venue browse | 99.5% | Planned |
+| stagegrid-notify | Fan notification fanout | 99.0% | Planned |
+| stagegrid-identity | Auth and access control | 99.9% | Planned |
+| stagegrid-loadgen | Synthetic traffic generation | — | Planned |
 
 ### Observability Stack
 
