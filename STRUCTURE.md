@@ -8,58 +8,39 @@ meridian/
 │       └── validate-manifests.yml  # YAML validation for all manifests
 ├── aws/
 │   └── vault/
-│       └── config/vault.hcl        # Vault server config for AWS
-├── azure/                          # Azure cluster config (Terraform — coming soon)
-├── gcp/                            # GCP cluster config (Terraform — coming soon)
+│       └── config/vault.hcl        # Vault server config for AWS plane (planned)
 ├── onprem/
-│   ├── docker-compose.yml          # Local stack: VM, Quickwit, Vault, Nginx
-│   ├── nginx/nginx.conf            # Reverse proxy config
-│   ├── node-exporter/web.yml       # Node exporter TLS config
+│   ├── docker-compose.yml          # On-prem stack: Vault, VictoriaMetrics, Quickwit, Nginx, MongoDB
+│   ├── nginx/nginx.conf            # TLS reverse proxy config
+│   ├── node-exporter/web.yml       # Node Exporter TLS config
 │   └── vault/config/vault.hcl     # Vault server config for on-prem
 ├── observability/
 │   ├── victoriametrics/
 │   │   └── prometheus.yml          # VictoriaMetrics scrape config
 │   ├── quickwit/
 │   │   └── quickwit.yaml           # Quickwit index and ingest config
-│   ├── otel/
-│   │   ├── fluent-bit.conf         # Fluent Bit log forwarding config
-│   │   └── vector.yaml             # Vector pipeline config
-│   └── jaeger/                     # Jaeger tracing config (coming soon)
+│   └── otel/
+│       ├── fluent-bit.conf         # Fluent Bit log forwarding config
+│       └── vector.yaml             # Vector pipeline config
 ├── security/
-│   ├── README.md                   # Links to jamesmcculley/security-tools
-│   ├── falco/README.md             # Links to jamesmcculley/security-tools
-│   ├── opa/README.md               # Links to jamesmcculley/security-tools
-│   └── trivy/                      # Trivy operator config (coming soon)
+│   └── README.md                   # Security tooling overview
 ├── gitops/
-│   ├── argocd/
-│   │   └── app-of-apps.yaml        # ArgoCD app of apps bootstrap
 │   └── helm/
 │       └── meridian-chart/
 │           ├── Chart.yaml
 │           └── values.yaml
 ├── tools/
-│   ├── meridian-core/              # Core Python library — config, clients, utilities
-│   ├── alert-router/               # Alert routing and deduplication (placeholder)
-│   ├── canary-analyzer/            # Canary deployment analysis (placeholder)
-│   ├── logparse/                   # Log parsing utilities (placeholder)
-│   ├── atlas-ops/                  # MongoDB Atlas operations (placeholder)
-│   └── py-exporter/                # Custom Prometheus exporter (placeholder)
-├── docs/                           # Project documentation (under review)
+│   └── meridian-core/              # Core Python library — config, Vault client, service discovery
 ├── README.md                       # Project overview
-├── OPERATIONS.md                   # Operational runbook
-├── TROUBLESHOOTING.md              # Troubleshooting guide
+├── STRUCTURE.md                    # This file
 └── CHANGELOG.md                    # Change history
 ```
 
 ## Cloud environments
 
-| Directory | Environment | Status |
-|---|---|---|
-| `onprem/` | Local k3s via OrbStack | Active |
-| `aws/` | EKS | In progress |
-| `azure/` | AKS | Planned |
-| `gcp/` | GKE | Planned |
-
-## Related repos
-- [jamesmcculley/security-tools](https://github.com/jamesmcculley/security-tools) — Falco rules, OPA policies
-- [jamesmcculley/sre-tools](https://github.com/jamesmcculley/sre-tools) — Scripts, dashboards, runbooks
+| Directory | Environment | Runtime | Status |
+|---|---|---|---|
+| `onprem/` | On-premises | docker-compose | Active — current foundation |
+| `aws/` | AWS | k3s on EC2 t3.micro | Planned — security plane |
+| `gcp/` | GCP | k3s on e2-micro | Planned — observability plane |
+| `azure/` | Azure | k3s on B1s | Planned — identity / GitOps plane |
