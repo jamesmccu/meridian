@@ -25,11 +25,11 @@ This file tracks the monorepo-to-multi-repo split for Meridian.
 | `gitops/` | `meridian-platform` | not_started | GitOps and deployment scaffolding. |
 | `observability/` | `meridian-platform` | not_started | Shared telemetry pipeline and configs. |
 | `tools/` | `meridian-platform` | not_started | Platform automation and shared libraries. |
-| `security/` | `meridian-security` | not_started | Security controls and enforcement assets. |
+| `security/` | `meridian-security` | in_progress | Copied to target repo; source cleanup pending. |
 | `README.md` (architecture sections) | `meridian-docs` | in_progress | Keep top-level summary in umbrella repo. |
-| `STRUCTURE.md` | `meridian-docs` | not_started | Canonical structure docs move to docs repo. |
-| `CHANGELOG.md` | `meridian-docs` | not_started | Change history for split components. |
-| `RELEASE_NOTES.md` | `meridian-docs` | not_started | Release narratives and milestones. |
+| `STRUCTURE.md` | `meridian-docs` | in_progress | Copied to target repo; source cleanup pending. |
+| `CHANGELOG.md` | `meridian-docs` | in_progress | Copied to target repo; source cleanup pending. |
+| `RELEASE_NOTES.md` | `meridian-docs` | in_progress | Copied to target repo; source cleanup pending. |
 | App/backend components (future extraction) | `meridian-api` | not_started | Extract when service code exists in monorepo. |
 | Frontend/dashboard components (future extraction) | `meridian-web` | not_started | Includes `dashboard` migration destination. |
 
@@ -45,7 +45,7 @@ This file tracks the monorepo-to-multi-repo split for Meridian.
 - [x] Create split repos and initialize scopes
 - [x] Link split repos from `MERIDIAN` README
 - [ ] Migrate platform folders (`aws`, `onprem`, `gitops`, `observability`, `tools`)
-- [ ] Migrate security folder (`security`)
-- [ ] Migrate docs artifacts (`STRUCTURE.md`, `CHANGELOG.md`, `RELEASE_NOTES.md`)
+- [x] Migrate security folder (`security`) - initial copy completed
+- [x] Migrate docs artifacts (`STRUCTURE.md`, `CHANGELOG.md`, `RELEASE_NOTES.md`) - initial copy completed
 - [ ] Add cross-repo CI/standards references
 - [ ] Remove duplicated content from `MERIDIAN`
