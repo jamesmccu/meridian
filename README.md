@@ -55,8 +55,8 @@ Network architecture is a first-class concern, not an afterthought.
 
 | Layer | Tool | What It Does |
 |---|---|---|
-| Runtime threat detection | Falco (eBPF) | Detects anomalous syscalls, container escapes, unexpected network connections — rules in [jamesmcculley/security-tools](https://github.com/jamesmcculley/security-tools) |
-| Policy enforcement | OPA / Gatekeeper | Blocks non-compliant deployments (unsigned images, privilege escalation, missing labels) — policies in [jamesmcculley/security-tools](https://github.com/jamesmcculley/security-tools) |
+| Runtime threat detection | Falco (eBPF) | Detects anomalous syscalls, container escapes, unexpected network connections — rules in `security/falco/` |
+| Policy enforcement | OPA / Gatekeeper | Blocks non-compliant deployments (unsigned images, privilege escalation, missing labels) — policies in `security/opa/` |
 | Vulnerability scanning | Trivy | Container image CVE scanning in CI and on-cluster admission |
 | Cloud threat detection | GuardDuty | AWS-native detection for compromised credentials, crypto mining, recon activity |
 | Cloud posture | Security Hub | Aggregated compliance findings across AWS accounts |

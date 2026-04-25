@@ -1,0 +1,282 @@
+# Meridian custom Falco rules
+# Covers: container escape, credential access, reverse shell, unexpected egress, crypto mining
+#
+# Approach: start strict, tune down based on production noise rather than pre-emptively
+# whitelisting things we haven't observed yet. A few rules are disabled out of the gate
+# because they need environment-specific baselines before they're useful.
+#
+# Adapted from falco's default ruleset and tightened for a containerized microservices
+# workload — the defaults cover too much ground for general Linux and not enough
+# for container-specific attack paths.
+
+# ── Lists ─────────────────────────────────────────────────────────────────────
+
+- list: shell_binaries
+  items: [bash, sh, dash, zsh, ksh]
+
+- list: scripting_binaries
+  items: [python, python3, python2, perl, ruby, php]
+
+# nc variants are a mess across distros — ncat, netcat, nc.traditional, nc.openbsd
+- list: network_tool_binaries
+  items: [nc, ncat, netcat, socat, nmap, masscan]
+
+- list: mining_pool_ports
+  # Stratum protocol ports used by common pools: xmrig defaults, nicehash, f2pool, etc.
+  items: [3333, 4444, 5555, 7777, 8333, 9999, 14444, 45700]
+
+- list: sensitive_credential_files
+  items:
+    - /etc/shadow
+    - /etc/sudoers
+    - /root/.ssh/id_rsa
+    - /root/.ssh/authorized_keys
+
+# ── Macros ────────────────────────────────────────────────────────────────────
+
+- macro: container_not_host
+  condition: container.id != "host"
+
+- macro: outbound_tcp
+  condition: >
+    evt.type = connect and
+    evt.dir = < and
+    fd.typechar in (4, 6)
+
+# RFC1918 + loopback — good enough for workload egress detection.
+# Not handling link-local (169.254.x.x) or IPv6 ULA here; will add if it comes up.
+- macro: rfc1918_or_loopback
+  condition: >
+    fd.rip startswith "10." or
+    fd.rip startswith "192.168." or
+    fd.rip startswith "172.16." or
+    fd.rip startswith "172.17." or
+    fd.rip startswith "172.18." or
+    fd.rip startswith "172.19." or
+    fd.rip startswith "172.20." or
+    fd.rip startswith "172.21." or
+    fd.rip startswith "172.22." or
+    fd.rip startswith "172.23." or
+    fd.rip startswith "172.24." or
+    fd.rip startswith "172.25." or
+    fd.rip startswith "172.26." or
+    fd.rip startswith "172.27." or
+    fd.rip startswith "172.28." or
+    fd.rip startswith "172.29." or
+    fd.rip startswith "172.30." or
+    fd.rip startswith "172.31." or
+    fd.rip = "127.0.0.1" or
+    fd.rip = "::1"
+
+# ── Container Escape ──────────────────────────────────────────────────────────
+
+- rule: Host Filesystem Mounted from Container
+  desc: >
+    Detects a bind-mount of the host root filesystem from inside a container.
+    A classic first step in container escape — gain write access to the host FS,
+    then drop a cron job or overwrite /etc/passwd.
+  condition: >
+    evt.type = mount and
+    container_not_host and
+    evt.arg.flags contains "MS_BIND" and
+    (evt.arg.targetpath = "/" or
+     evt.arg.targetpath startswith "/host" or
+     evt.arg.targetpath startswith "/mnt/host")
+  output: >
+    Host filesystem bind-mount from container
+    (user=%user.name uid=%user.uid container=%container.name
+     image=%container.image.repository cmd=%proc.cmdline target=%evt.arg.targetpath)
+  priority: CRITICAL
+  tags: [container_escape, T1611, NIST_SI-4, NIST_AU-2]
+
+- rule: nsenter Used in Container
+  desc: >
+    nsenter in a container almost always means someone is trying to enter
+    the host network or PID namespace. Legitimate use cases are rare enough
+    that this should always alert.
+  condition: >
+    evt.type in (execve, execveat) and
+    container_not_host and
+    proc.name = nsenter
+  output: >
+    nsenter called from container
+    (user=%user.name container=%container.name image=%container.image.repository
+     cmd=%proc.cmdline parent=%proc.pname)
+  priority: CRITICAL
+  tags: [container_escape, namespace, T1611, NIST_SI-4, NIST_AU-2]
+
+- rule: Interactive Shell in Privileged Container
+  desc: >
+    Privileged containers with an interactive TTY are almost always either
+    a debugging session gone wrong or an attacker who got exec access.
+    The tty check cuts most of the noise from non-interactive privileged workloads.
+  condition: >
+    evt.type in (execve, execveat) and
+    container_not_host and
+    container.privileged = true and
+    proc.name in (shell_binaries) and
+    proc.tty != 0
+  output: >
+    Interactive shell in privileged container
+    (user=%user.name shell=%proc.name container=%container.name
+     image=%container.image.repository cmd=%proc.cmdline)
+  priority: CRITICAL
+  tags: [container_escape, privilege_escalation, T1609, NIST_SI-4, NIST_AU-2]
+
+# ── Credential Access ─────────────────────────────────────────────────────────
+
+- rule: Shadow File Read
+  desc: >
+    Nothing in our workloads should ever touch /etc/shadow. If something does,
+    it's either a misconfigured sysadmin tool running inside a container or
+    credential harvesting.
+  condition: >
+    evt.type in (open, openat, openat2) and
+    evt.dir = < and
+    fd.name = "/etc/shadow"
+  output: >
+    /etc/shadow read attempt
+    (user=%user.name proc=%proc.name container=%container.name
+     image=%container.image.repository cmd=%proc.cmdline)
+  priority: ERROR
+  tags: [credential_access, T1003, NIST_SI-4, NIST_AU-2, NIST_AC-6]
+
+- rule: AWS Credentials File Accessed in Container
+  desc: >
+    Containers using IRSA should never need ~/.aws/credentials — those are for
+    developers running locally. A container read of these files is a signal that
+    either a misconfigured workload is using file-based creds (bad) or someone
+    is harvesting them (worse).
+  condition: >
+    evt.type in (open, openat, openat2) and
+    evt.dir = < and
+    (fd.name = "/root/.aws/credentials" or
+     fd.name = "/root/.aws/config" or
+     fd.name startswith "/home/" and fd.name endswith "/.aws/credentials") and
+    container_not_host
+  output: >
+    AWS credential file read in container
+    (user=%user.name proc=%proc.name container=%container.name
+     image=%container.image.repository fd=%fd.name)
+  priority: ERROR
+  tags: [credential_access, aws, T1552, NIST_SI-4, NIST_AU-2, NIST_IA-5]
+
+- rule: Kubernetes Service Account Token Read by Unexpected Process
+  desc: >
+    The k8s client library reads the service account token once at startup.
+    Repeated reads at runtime, or reads by processes we don't expect (anything
+    that isn't the app runtime), could indicate token harvesting.
+    # TODO: tighten the exception list once we know what processes legitimately
+    # access the token in each service — right now this is broad.
+  condition: >
+    evt.type in (open, openat, openat2) and
+    evt.dir = < and
+    fd.name startswith "/var/run/secrets/kubernetes.io/serviceaccount" and
+    container_not_host and
+    not proc.name in (java, python, python3, node, ruby, kubectl, curl)
+  output: >
+    Service account token read by unexpected process
+    (user=%user.name proc=%proc.name container=%container.name
+     image=%container.image.repository fd=%fd.name)
+  priority: WARNING
+  tags: [credential_access, kubernetes, T1552, NIST_SI-4, NIST_AU-2, NIST_IA-9]
+
+# ── Reverse Shell / Execution ─────────────────────────────────────────────────
+
+- rule: Outbound Connection from Shell or Scripting Runtime
+  desc: >
+    Shell or interpreter making an outbound TCP connection to a non-RFC1918 address.
+    The classic reverse shell pattern. This will fire on legitimate curl/wget in
+    shell scripts too — expect some tuning needed once we have a baseline of
+    legitimate init patterns.
+    # starting strict here — can add per-image exceptions if CI pipelines trigger it
+  condition: >
+    outbound_tcp and
+    container_not_host and
+    proc.name in (shell_binaries, scripting_binaries, network_tool_binaries) and
+    not rfc1918_or_loopback
+  output: >
+    Outbound connection from shell or interpreter
+    (user=%user.name proc=%proc.name container=%container.name
+     image=%container.image.repository dest=%fd.rip:%fd.rport cmd=%proc.cmdline)
+  priority: CRITICAL
+  tags: [reverse_shell, network, T1059, T1071, NIST_SI-4, NIST_AU-2]
+
+- rule: Network Tool Spawned in Workload Container
+  desc: >
+    nc, socat, nmap etc. running inside an application container.
+    None of our StageGrid services should ever exec these.
+    # not detecting lateral movement via kubectl exec yet — need to differentiate
+    # from legitimate debugging sessions before enabling that rule
+  condition: >
+    evt.type in (execve, execveat) and
+    container_not_host and
+    proc.name in (network_tool_binaries)
+  output: >
+    Network tool spawned in container
+    (user=%user.name proc=%proc.name container=%container.name
+     image=%container.image.repository cmd=%proc.cmdline parent=%proc.pname)
+  priority: WARNING
+  tags: [network, lateral_movement, T1059, NIST_SI-4, NIST_AU-2]
+
+# ── Unexpected Egress ─────────────────────────────────────────────────────────
+
+# This rule is disabled by default — it fires constantly without a per-environment
+# allowlist of legitimate external endpoints (package registries, telemetry, etc.).
+# Enable this after running the stack for a week and cataloging the normal egress pattern.
+- rule: Workload Container External Egress on Non-Standard Port
+  desc: >
+    Outbound connection from a workload container to a non-RFC1918 address
+    on a port other than 80/443/8443. Catches data exfil and C2 beaconing
+    that doesn't use standard web ports.
+  condition: >
+    outbound_tcp and
+    container_not_host and
+    not rfc1918_or_loopback and
+    not fd.rport in (80, 443, 8080, 8443, 9090) and
+    not proc.name in (node_exporter, victoria, vector, fluent-bit)
+  output: >
+    Unexpected external egress from workload container
+    (user=%user.name proc=%proc.name container=%container.name
+     image=%container.image.repository dest=%fd.rip:%fd.rport)
+  priority: WARNING
+  enabled: false
+  # TODO: build a per-namespace egress allowlist and re-enable once the GCP plane is up
+  tags: [network, data_exfil, T1041, NIST_SI-4, NIST_SC-7, NIST_AU-12]
+
+# ── Crypto Mining ─────────────────────────────────────────────────────────────
+
+- rule: Connection to Known Mining Pool Port
+  desc: >
+    Outbound TCP to ports used by Stratum protocol mining pools.
+    If this fires in production, something is very wrong — mining pool
+    operators don't use these ports for anything else.
+  condition: >
+    outbound_tcp and
+    container_not_host and
+    fd.rport in (mining_pool_ports)
+  output: >
+    Potential crypto mining pool connection
+    (user=%user.name proc=%proc.name container=%container.name
+     image=%container.image.repository dest=%fd.rip:%fd.rport)
+  priority: CRITICAL
+  tags: [crypto_mining, T1496, NIST_SI-4, NIST_AU-2]
+
+- rule: Mining Software Executed
+  desc: >
+    Known mining binaries or stratum protocol arguments in the command line.
+    Belt-and-suspenders alongside the port-based rule above.
+  condition: >
+    evt.type in (execve, execveat) and
+    container_not_host and
+    (proc.name in (xmrig, minerd, cgminer, bfgminer, ethminer) or
+     proc.cmdline contains "stratum+tcp" or
+     proc.cmdline contains "stratum2+tcp" or
+     proc.cmdline contains "pool.minergate" or
+     proc.cmdline contains "nanopool.org")
+  output: >
+    Mining software or stratum protocol detected
+    (user=%user.name proc=%proc.name container=%container.name
+     image=%container.image.repository cmd=%proc.cmdline)
+  priority: CRITICAL
+  tags: [crypto_mining, T1496, NIST_SI-4, NIST_AU-2]
