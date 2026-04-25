@@ -11,6 +11,20 @@ This README reflects the intended architecture. See [Status](#status) for what's
 
 ---
 
+## Repository Split
+
+Meridian is being transitioned from a single repository into a corporate-style multi-repo layout:
+
+- [meridian-platform](https://github.com/jamesmcculley/meridian-platform) - infrastructure, GitOps, observability, shared platform tooling
+- [meridian-api](https://github.com/jamesmcculley/meridian-api) - backend services and API contracts
+- [meridian-web](https://github.com/jamesmcculley/meridian-web) - frontend and dashboard applications
+- [meridian-security](https://github.com/jamesmcculley/meridian-security) - security controls, policies, and detection engineering
+- [meridian-docs](https://github.com/jamesmcculley/meridian-docs) - architecture docs, ADRs, runbooks, and release notes
+
+During migration, this repository remains the umbrella view of the full Meridian architecture.
+
+---
+
 ## Why This Project Exists
 
 Most portfolio infrastructure projects deploy a generic app and call it done. This one is different. Meridian models a fictional company (Meridian Software, an AI hardware manufacturer) running a production workload — **StageGrid**, a live-events ticketing platform. StageGrid's traffic profile — sharp on-sale spikes, high checkout criticality, async notification fanout — forces real decisions about security boundaries, failure domain isolation, SLO design, and compliance scope.
