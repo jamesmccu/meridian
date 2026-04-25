@@ -135,37 +135,35 @@ Platform tooling lives in `tools/`. Written in Python with type hints and async 
 
 ```
 meridian/
-├── .github/
-│   └── workflows/
-│       ├── build-sign.yml          # Container build + Cosign keyless signing
-│       ├── lint.yml                # Ruff linting for tools/
-│       └── validate-manifests.yml  # YAML validation for all manifests
-├── aws/
-│   └── vault/
-│       └── config/vault.hcl        # Vault server config for AWS plane (planned)
-├── observability/
-│   ├── victoriametrics/
-│   │   └── prometheus.yml          # VictoriaMetrics scrape config
-│   ├── quickwit/
-│   │   └── quickwit.yaml           # Quickwit index and ingest config
-│   └── otel/
-│       ├── fluent-bit.conf         # Fluent Bit log forwarding config
-│       └── vector.yaml             # Vector pipeline config
-├── onprem/
-│   ├── docker-compose.yml          # On-prem stack: Vault, VictoriaMetrics, Quickwit, Nginx, MongoDB
-│   ├── nginx/nginx.conf            # TLS reverse proxy config
-│   ├── node-exporter/web.yml       # Node Exporter TLS config
-│   └── vault/config/vault.hcl     # Vault server config for on-prem
-├── security/
-│   └── README.md                   # Security tooling overview (Falco/OPA in security-tools repo)
+├── .github/workflows/              # CI: build+sign, lint, trivy scan, manifest validation
+├── aws/vault/config/               # Vault config for AWS plane (planned)
+├── compliance/
+│   └── nist-800-53-mapping.md      # NIST 800-53 control mapping
+├── docs/
+│   └── THREAT-MODEL.md             # STRIDE threat model
 ├── gitops/
-│   └── helm/
-│       └── meridian-chart/         # Helm chart scaffold
-├── tools/
-│   └── meridian-core/              # Core Python library — config, Vault client, service discovery
-├── README.md
-├── STRUCTURE.md                    # Authoritative directory inventory
-└── CHANGELOG.md
+│   ├── argocd/                     # App of Apps definitions (planned)
+│   └── helm/meridian-chart/        # Helm chart scaffold
+├── k8s/                            # Kubernetes manifests (planned)
+├── networking/
+│   ├── calico/                     # Network policies (planned)
+│   ├── waf/                        # Cloud Armor / AWS WAF rules (planned)
+│   └── wireguard/                  # Cross-cloud mesh (planned)
+├── observability/
+│   ├── otel/                       # Fluent Bit + Vector pipeline configs
+│   ├── quickwit/                   # Index and ingest config
+│   └── victoriametrics/            # Scrape config
+├── onprem/
+│   └── docker-compose.yml          # Running stack: Vault, VictoriaMetrics, Quickwit, Nginx, MongoDB
+├── security/
+│   ├── falco/rules/                # Custom Falco detection rules
+│   ├── opa/templates/              # Gatekeeper ConstraintTemplates
+│   ├── opa/constraints/            # Gatekeeper Constraint resources
+│   └── trivy/                      # Trivy config
+├── terraform/
+│   ├── aws/                        # VPCs, IAM, KMS, GuardDuty (planned)
+│   └── gcp/                        # VPCs, firewall rules, Cloud Armor (planned)
+└── tools/meridian-core/            # Core Python library (implemented)
 ```
 
 See [STRUCTURE.md](./STRUCTURE.md) for the authoritative directory inventory.
