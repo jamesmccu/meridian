@@ -1,0 +1,17 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRestrictRegistries
+metadata:
+  name: restrict-registries
+spec:
+  enforcementAction: deny
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+  parameters:
+    # gcr.io and ghcr.io match our CI pipeline outputs — build-sign.yml pushes to ghcr.io.
+    # Docker Hub is intentionally excluded. Public images need to be mirrored to ghcr.io first.
+    allowedRegistries:
+      - "ghcr.io/jamesmcculley/"
+      - "gcr.io/meridian-project/"
+      # TODO: add the GCP Artifact Registry path once that's provisioned

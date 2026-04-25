@@ -1,0 +1,36 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8srestricthostnamespaces
+  annotations:
+    description: >
+      Blocks pods from using host network, PID, or IPC namespaces.
+      These settings punch holes in the container isolation boundary and
+      should never be needed by application workloads.
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sRestrictHostNamespaces
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8srestricthostnamespaces
+
+        violation[{"msg": msg}] {
+          input.review.object.spec.hostNetwork == true
+          msg := "pod must not use host network namespace"
+        }
+
+        violation[{"msg": msg}] {
+          input.review.object.spec.hostPID == true
+          msg := "pod must not use host PID namespace"
+        }
+
+        violation[{"msg": msg}] {
+          input.review.object.spec.hostIPC == true
+          msg := "pod must not use host IPC namespace"
+        }
+
+        # TODO: add exception for kube-system namespace once we confirm which
+        # system pods legitimately need host networking (node-exporter does)

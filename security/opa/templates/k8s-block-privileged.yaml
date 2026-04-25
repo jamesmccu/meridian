@@ -1,0 +1,48 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8sblockprivileged
+  annotations:
+    description: >
+      Blocks pods that run as privileged or add capabilities that effectively
+      grant host-level access. SYS_ADMIN in particular is a near-complete
+      escape from container isolation.
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sBlockPrivileged
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8sblockprivileged
+
+        # could also enforce seccomp profiles here, but skipping until we have
+        # profiles defined — adding a requirement without a valid profile to
+        # reference will block everything
+        violation[{"msg": msg}] {
+          c := input_containers[_]
+          c.securityContext.privileged == true
+          msg := sprintf("container %v: privileged mode is not allowed", [c.name])
+        }
+
+        violation[{"msg": msg}] {
+          c := input_containers[_]
+          cap := c.securityContext.capabilities.add[_]
+          dangerous_caps := {"SYS_ADMIN", "NET_ADMIN", "NET_RAW", "SYS_PTRACE",
+                             "SYS_MODULE", "DAC_OVERRIDE", "DAC_READ_SEARCH",
+                             "SETUID", "SETGID"}
+          dangerous_caps[cap]
+          msg := sprintf("container %v: capability %v is not allowed", [c.name, cap])
+        }
+
+        # covers initContainers too — a common oversight in similar policies
+        input_containers[c] {
+          c := input.review.object.spec.containers[_]
+        }
+
+        input_containers[c] {
+          c := input.review.object.spec.initContainers[_]
+        }
+
+        # TODO: add ephemeralContainers once we're running k8s >= 1.25 everywhere

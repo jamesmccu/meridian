@@ -1,0 +1,45 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8srestrictregistries
+  annotations:
+    description: >
+      Restricts container images to an allowlist of approved registries.
+      Prevents workloads from pulling arbitrary images from Docker Hub or
+      other unauthenticated sources.
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sRestrictRegistries
+      validation:
+        openAPIV3Schema:
+          type: object
+          properties:
+            allowedRegistries:
+              type: array
+              items:
+                type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8srestrictregistries
+
+        violation[{"msg": msg}] {
+          c := input_containers[_]
+          not registry_allowed(c.image)
+          msg := sprintf("container %v: image %v is not from an allowed registry", [c.name, c.image])
+        }
+
+        registry_allowed(image) {
+          registry := input.parameters.allowedRegistries[_]
+          startswith(image, registry)
+        }
+
+        input_containers[c] {
+          c := input.review.object.spec.containers[_]
+        }
+
+        input_containers[c] {
+          c := input.review.object.spec.initContainers[_]
+        }

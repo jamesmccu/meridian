@@ -1,0 +1,16 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRestrictHostNamespaces
+metadata:
+  name: restrict-host-namespaces
+spec:
+  enforcementAction: deny
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+    # system namespaces need exemptions — node-exporter runs with hostNetwork
+    # and hostPID on most default setups
+    excludedNamespaces:
+      - kube-system
+      - kube-public
+      - gatekeeper-system

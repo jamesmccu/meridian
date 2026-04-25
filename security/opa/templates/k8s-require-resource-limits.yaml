@@ -1,0 +1,41 @@
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8srequireresourcelimits
+  annotations:
+    description: >
+      Requires all containers to have CPU and memory limits set.
+      Without limits a single misbehaving pod can exhaust node resources —
+      particularly relevant during StageGrid on-sale spikes.
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sRequireResourceLimits
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8srequireresourcelimits
+
+        violation[{"msg": msg}] {
+          c := input_containers[_]
+          not c.resources.limits.cpu
+          msg := sprintf("container %v: CPU limit is required", [c.name])
+        }
+
+        violation[{"msg": msg}] {
+          c := input_containers[_]
+          not c.resources.limits.memory
+          msg := sprintf("container %v: memory limit is required", [c.name])
+        }
+
+        input_containers[c] {
+          c := input.review.object.spec.containers[_]
+        }
+
+        input_containers[c] {
+          c := input.review.object.spec.initContainers[_]
+        }
+
+        # not enforcing requests here, just limits — requests are a scheduling hint,
+        # limits are the actual safety boundary
