@@ -119,7 +119,6 @@ Platform tooling lives in `tools/`. Written in Python with type hints and async 
 | `alert-router` | Alert routing and enrichment (Falco/GuardDuty → Slack/PagerDuty) | Planned |
 | `canary-analyzer` | Automated canary analysis using VictoriaMetrics metrics | Planned |
 | `flow-analyzer` | VPC Flow Log parsing and network anomaly detection | Planned |
-| `py-exporter` | Custom VictoriaMetrics exporter for StageGrid business metrics | Planned |
 
 ---
 
