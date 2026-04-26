@@ -5,6 +5,17 @@ certs/
 *.key
 *.csr
 *.srl
+.env
+.env.*
+!.env.example
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+kubeconfig
+*.kubeconfig
+.kube/
+.vault-token
 
 # Runtime data directories
 data/
@@ -17,3 +28,6 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .DS_Store
+
+# Local tool state
+.claude/

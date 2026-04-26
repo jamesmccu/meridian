@@ -9,7 +9,7 @@ environment variable before the function is called.
 import os
 
 
-def get_config() -> dict:
+def get_config() -> dict[str, str]:
     """Read platform config from environment variables with sensible defaults."""
     return {
         # Vault — secrets management (AWS, KMS auto-unseal)
