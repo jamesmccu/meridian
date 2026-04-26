@@ -1,18 +1,39 @@
-name: Lint
+name: Python Quality
 on: [push, pull_request]
+
 jobs:
-  lint:
+  python-quality:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
       - name: Check for Python files
         id: check
         run: |
           count=$(find tools/ -name "*.py" | wc -l)
           echo "count=$count" >> $GITHUB_OUTPUT
+
+      - name: Install meridian-core dev dependencies
+        if: steps.check.outputs.count > 0
+        working-directory: tools/meridian-core
+        run: python -m pip install -e ".[dev]"
+
       - name: Lint Python
         if: steps.check.outputs.count > 0
-        run: pip install ruff && ruff check tools/
-      - name: Skip lint
+        run: python -m ruff check tools/
+
+      - name: Type check Python
+        if: steps.check.outputs.count > 0
+        run: python -m mypy tools/meridian-core/src
+
+      - name: Test Python
+        if: steps.check.outputs.count > 0
+        run: python -m pytest tools/meridian-core/tests
+
+      - name: Skip Python checks
         if: steps.check.outputs.count == 0
-        run: echo "No Python files in tools/ — skipping lint"
+        run: echo "No Python files in tools/ — skipping Python checks"

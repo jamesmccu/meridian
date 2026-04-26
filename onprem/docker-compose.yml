@@ -42,7 +42,7 @@ services:
     mem_limit: 128m
     volumes:
       - ./certs:/certs:ro
-      - ./prometheus.yml:/prometheus.yml:ro
+      - ../observability/victoriametrics/prometheus.yml:/prometheus.yml:ro
       - ./data/victoriametrics:/storage
     command:
       - --promscrape.config=/prometheus.yml
@@ -58,7 +58,7 @@ services:
     mem_limit: 64m
     volumes:
       - ./certs:/certs:ro
-      - ./fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
+      - ../observability/otel/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
       - /var/log:/var/log:ro
       - /run/log/journal:/run/log/journal:ro
       - /etc/machine-id:/etc/machine-id:ro
@@ -70,7 +70,7 @@ services:
     mem_limit: 64m
     volumes:
       - ./certs:/certs:ro
-      - ./vector/vector.yaml:/etc/vector/vector.yaml:ro
+      - ../observability/otel/vector.yaml:/etc/vector/vector.yaml:ro
     command: ["--config", "/etc/vector/vector.yaml"]
     depends_on:
       - quickwit
@@ -81,7 +81,7 @@ services:
     volumes:
       - ./certs:/certs:ro
       - ./data/quickwit:/quickwit/qwdata
-      - ./quickwit.yaml:/quickwit/config/quickwit.yaml:ro
+      - ../observability/quickwit/quickwit.yaml:/quickwit/config/quickwit.yaml:ro
 
   mongo:
     image: mongo:7

@@ -10,7 +10,7 @@ scrape_configs:
       key_file:    /certs/meridian.local-key.pem
       server_name: node-exporter.meridian.local
     static_configs:
-      - targets: [node-exporter:9100]
+      - targets: ["node-exporter:9100"]
 
   - job_name: victoriametrics
     scheme: https
@@ -20,7 +20,7 @@ scrape_configs:
       key_file:    /certs/meridian.local-key.pem
       server_name: victoriametrics.meridian.local
     static_configs:
-      - targets: [victoriametrics:8428]
+      - targets: ["victoriametrics:8428"]
 
   - job_name: quickwit
     scheme: https
@@ -28,4 +28,4 @@ scrape_configs:
       ca_file:     /certs/rootCA.pem
       server_name: quickwit.meridian.local
     static_configs:
-      - targets: [nginx:7280]
+      - targets: ["nginx:7280"]

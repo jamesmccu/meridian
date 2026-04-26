@@ -1,0 +1,25 @@
+timeout: 10m
+
+severity:
+  - CRITICAL
+  - HIGH
+  - MEDIUM
+  - LOW
+
+scan:
+  # skip runtime data dirs and virtual envs — not deployment artifacts
+  skip-dirs:
+    - data/
+    - .venv/
+    - .ruff_cache/
+    - "**/__pycache__"
+
+ignore:
+  # nothing ignored yet — keeping this empty until we hit a false positive
+  # or a vuln we've formally accepted risk on
+  # format when needed:
+  # - id: CVE-2021-12345
+  #   paths:
+  #     - tools/meridian-core/
+  #   reason: "upstream fix pending; mitigated by network isolation"
+  unfixed: false
