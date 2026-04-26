@@ -13,7 +13,7 @@ jobs:
     name: Filesystem scan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Run filesystem scan
         uses: aquasecurity/trivy-action@v0.36.0
@@ -27,7 +27,7 @@ jobs:
           trivy-config: security/trivy/trivy.yaml
 
       - name: Upload filesystem scan results
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
           sarif_file: trivy-fs.sarif
@@ -37,25 +37,27 @@ jobs:
     name: Image scan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # build-sign.yml only triggers on main pushes to tools/meridian-core/ — so on most PRs
       # there's no new image to scan. Scanning :latest keeps us honest between builds.
-      # If :latest doesn't exist yet (first run), this step will fail with a 404 from GHCR
-      # which is acceptable — the fs scan is the critical gate.
+      # The image scan is informational for PRs because :latest may not exist yet, may
+      # not be public, or may represent main rather than the PR. The fs scan remains
+      # the hard vulnerability gate for proposed changes.
       - name: Run image scan
         uses: aquasecurity/trivy-action@v0.36.0
+        continue-on-error: true
         with:
           scan-type: image
           image-ref: ghcr.io/jamesmcculley/meridian-core:latest
           format: sarif
           output: trivy-image.sarif
           severity: CRITICAL,HIGH
-          exit-code: "1"
+          exit-code: "0"
           trivy-config: security/trivy/trivy.yaml
 
       - name: Upload image scan results
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
           sarif_file: trivy-image.sarif
@@ -65,7 +67,7 @@ jobs:
     name: Config scan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Run config scan
         uses: aquasecurity/trivy-action@v0.36.0
@@ -81,7 +83,7 @@ jobs:
           trivy-config: security/trivy/trivy.yaml
 
       - name: Upload config scan results
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         if: always()
         with:
           sarif_file: trivy-config.sarif

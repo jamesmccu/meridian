@@ -35,6 +35,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Improved `meridian-core` test ergonomics and type annotations
 - Expanded the Python quality workflow to run Ruff, mypy, and pytest
 - Fixed YAML validation workflow dependency installation
+- Updated GitHub Actions versions for Node 24 compatibility
+- Made PR image scanning informational while keeping filesystem scanning as the
+  hard Trivy vulnerability gate
 
 ### Planned
 - Observability foundation — dashboards, traces, alerting, and optional Datadog export
@@ -70,7 +73,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Fixed
 - Ruff lint errors (E501, I001) in meridian-core
-- CI: skip ruff when no Python files present; suppress Node.js 20 deprecation warning
+- CI: skip ruff when no Python files present; suppress then-current Node.js deprecation warning
 
 ### Removed
 - `.gitkeep`-only directories and comment-only YAML stubs
