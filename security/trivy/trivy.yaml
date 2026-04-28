@@ -20,6 +20,6 @@ ignore:
   # format when needed:
   # - id: CVE-2021-12345
   #   paths:
-  #     - tools/meridian-core/
+  #     - tools/meridian-detect/
   #   reason: "upstream fix pending; mitigated by network isolation"
   unfixed: false

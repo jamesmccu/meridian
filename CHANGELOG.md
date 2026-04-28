@@ -9,6 +9,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## [Unreleased]
 
 ### Changed
+- Renamed `meridian-core` to `meridian-detect` and added a CLI scaffold for
+  current config output and planned detection workflow commands.
 - Removed archived platform-era material from the default branch after tagging it
   as `meridian-v1-platform-archive`.
 - Repositioned MERIDIAN as a Kubernetes runtime detection engineering project.
@@ -17,7 +19,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Rewrote `security/README.md` to make this repository the future home for
   detection logic, metadata, sample events, and validation evidence.
 - Updated `STRUCTURE.md` for the narrowed v2 scope.
-- Updated `meridian-core` wording to avoid broad observability/platform claims.
+- Updated Python tooling wording to avoid broad observability/platform claims.
 
 ### Retained
 - Trivy CI scanning.

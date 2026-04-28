@@ -11,7 +11,7 @@ if ! command -v "${PYTHON_BIN}" >/dev/null 2>&1; then
 fi
 
 "${PYTHON_BIN}" -c 'import sys; raise SystemExit(0 if sys.version_info >= (3, 12) else 1)' || {
-  echo "error: Python 3.12+ is required for meridian-core." >&2
+  echo "error: Python 3.12+ is required for meridian-detect." >&2
   exit 1
 }
 
@@ -19,13 +19,15 @@ cd "${ROOT_DIR}"
 
 "${PYTHON_BIN}" -m venv "${VENV_DIR}"
 "${VENV_DIR}/bin/python" -m pip install --upgrade pip
-"${VENV_DIR}/bin/python" -m pip install -e "tools/meridian-core[dev]"
+"${VENV_DIR}/bin/python" -m pip uninstall -y meridian-core >/dev/null 2>&1 || true
+"${VENV_DIR}/bin/python" -m pip install -e "tools/meridian-detect[dev]"
 
 cat <<'EOF'
 
 Bootstrap complete.
 
 Available local checks:
+  meridian-detect --help
   make test
   make lint
   make typecheck

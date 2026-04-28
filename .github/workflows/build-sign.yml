@@ -4,12 +4,12 @@ on:
   push:
     branches: [main]
     paths:
-      - "tools/meridian-core/**"
+      - "tools/meridian-detect/**"
       - ".github/workflows/build-sign.yml"
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/meridian-core
+  IMAGE_NAME: ${{ github.repository_owner }}/meridian-detect
 
 permissions:
   contents: read
@@ -46,7 +46,7 @@ jobs:
         id: build
         uses: docker/build-push-action@v7
         with:
-          context: tools/meridian-core
+          context: tools/meridian-detect
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

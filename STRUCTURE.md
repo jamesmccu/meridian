@@ -4,7 +4,7 @@
 MERIDIAN/
 ├── .github/
 │   └── workflows/
-│       ├── build-sign.yml          # meridian-core image build/sign workflow
+│       ├── build-sign.yml          # meridian-detect image build/sign workflow
 │       ├── lint.yml                # Python lint, type checks, and tests
 │       ├── trivy-scan.yml          # Trivy filesystem, image, and config scans
 │       └── validate-manifests.yml  # YAML validation
@@ -32,7 +32,7 @@ MERIDIAN/
 │       ├── README.md
 │       └── trivy.yaml
 ├── tools/
-│   └── meridian-core/              # Current Python diagnostics package
+│   └── meridian-detect/            # Current Python CLI scaffold
 ├── README.md
 ├── SECURITY.md
 ├── RELEASE_NOTES.md
@@ -49,7 +49,7 @@ Active areas:
 - detection architecture documentation
 - security scanning CI
 - Quickwit and event-routing configuration
-- Python diagnostics package
+- Python CLI scaffold for detection workflow commands
 
 Planned active areas:
 

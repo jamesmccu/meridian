@@ -3,19 +3,22 @@ SHELL := /bin/bash
 PYTHON ?= .venv/bin/python
 PIP ?= $(PYTHON) -m pip
 
-.PHONY: bootstrap test lint typecheck yaml compose trivy-fs trivy-config check
+.PHONY: bootstrap cli-help test lint typecheck yaml compose trivy-fs trivy-config check
 
 bootstrap:
 	./scripts/bootstrap.sh
 
+cli-help:
+	.venv/bin/meridian-detect --help
+
 test:
-	$(PYTHON) -m pytest tools/meridian-core/tests
+	$(PYTHON) -m pytest tools/meridian-detect/tests
 
 lint:
-	$(PYTHON) -m ruff check tools/meridian-core
+	$(PYTHON) -m ruff check tools/meridian-detect
 
 typecheck:
-	$(PYTHON) -m mypy tools/meridian-core/src
+	$(PYTHON) -m mypy tools/meridian-detect/src
 
 yaml:
 	ruby -e 'require "yaml"; Dir["**/*.{yml,yaml}"].each { |f| YAML.load_file(f) }'
