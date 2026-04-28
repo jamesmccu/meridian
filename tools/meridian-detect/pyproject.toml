@@ -3,11 +3,14 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "meridian-core"
+name = "meridian-detect"
 version = "0.1.0"
-description = "Core configuration diagnostics for MERIDIAN"
+description = "Detection engineering CLI scaffolding for MERIDIAN"
 requires-python = ">=3.12"
 dependencies = []
+
+[project.scripts]
+meridian-detect = "meridian_detect.cli:main"
 
 [project.optional-dependencies]
 dev = [
@@ -35,4 +38,4 @@ target-version = "py312"
 select = ["E", "F", "I", "UP"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/meridian_core"]
+packages = ["src/meridian_detect"]

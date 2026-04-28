@@ -39,7 +39,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      # build-sign.yml only triggers on main pushes to tools/meridian-core/ — so on most PRs
+      # build-sign.yml only triggers on main pushes to tools/meridian-detect/ — so on most PRs
       # there's no new image to scan. Scanning :latest keeps us honest between builds.
       # The image scan is informational for PRs because :latest may not exist yet, may
       # not be public, or may represent main rather than the PR. The fs scan remains
@@ -49,7 +49,7 @@ jobs:
         continue-on-error: true
         with:
           scan-type: image
-          image-ref: ghcr.io/jamesmcculley/meridian-core:latest
+          image-ref: ghcr.io/jamesmcculley/meridian-detect:latest
           format: sarif
           output: trivy-image.sarif
           severity: CRITICAL,HIGH
@@ -58,7 +58,7 @@ jobs:
 
       - name: Upload image scan results
         uses: github/codeql-action/upload-sarif@v4
-        if: always()
+        if: always() && hashFiles('trivy-image.sarif') != ''
         with:
           sarif_file: trivy-image.sarif
           category: trivy-image
