@@ -13,11 +13,6 @@ MERIDIAN/
 │   ├── learning-map.md             # Detection engineering learning map
 │   └── runbooks/
 │       └── README.md               # Planned operational runbooks
-├── legacy/
-│   ├── docs/                       # Archived broad platform docs
-│   ├── gitops/                     # Archived GitOps placeholders
-│   ├── infra/                      # Archived IaC placeholders
-│   └── aws/                        # Archived AWS Vault placeholder
 ├── observability/
 │   ├── quickwit/
 │   │   └── quickwit.yaml           # Searchable event backend config
@@ -65,7 +60,8 @@ Planned active areas:
 - Python enrichment and reporting
 - Kubernetes deployment profiles
 
-## Legacy Scope
+## Archived Scope
 
-The `legacy/` directory contains earlier platform-era concepts. These files are
-kept for context only and should not be read as active implementation.
+Earlier platform-era concepts were archived in the
+`meridian-v1-platform-archive` Git tag. They are not part of the default branch
+because they do not support the v2 detection engineering scope.

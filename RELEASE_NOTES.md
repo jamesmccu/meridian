@@ -11,8 +11,9 @@ detection engineering project.
 - Rewrote README around detection engineering.
 - Rewrote active architecture docs for the target Falco -> Vector -> Quickwit ->
   Python enrichment flow.
-- Moved broad platform, cloud, GitOps, IaC, and static-site planning docs into
-  `legacy/`.
+- Archived broad platform, cloud, GitOps, IaC, and static-site planning docs in
+  the `meridian-v1-platform-archive` Git tag and removed them from the default
+  branch.
 - Reframed `security/README.md` so detections should live in this repository.
 - Kept existing Quickwit, Vector, Trivy, and Python quality checks as useful v2
   building blocks.

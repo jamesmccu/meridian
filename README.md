@@ -49,7 +49,9 @@ Not active v2 scope:
 - service mesh
 - compliance certification claims
 
-Earlier platform-oriented material has been moved to [legacy/](./legacy/).
+Earlier platform-oriented material was archived in the
+`meridian-v1-platform-archive` Git tag and is no longer part of the default
+branch.
 
 ---
 
@@ -118,7 +120,6 @@ EKS, GKE, or AKS should be adapters, not required architecture.
 MERIDIAN/
 ├── .github/workflows/        # CI quality, validation, and security scans
 ├── docs/                     # Active v2 design and runbook docs
-├── legacy/                   # Archived platform-era scope
 ├── observability/            # Quickwit and event pipeline configuration
 ├── onprem/                   # Existing Compose lab from earlier iteration
 ├── security/                 # Security tooling docs and Trivy config
