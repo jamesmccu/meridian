@@ -236,26 +236,36 @@ Each detection should eventually include:
 
 ## Usage
 
+Bootstrap a local development environment:
+
+```bash
+make bootstrap
+```
+
 Current local checks:
 
 ```bash
-python3 -m pytest tools/meridian-core/tests
-python3 -m ruff check tools/meridian-core
-python3 -m mypy tools/meridian-core/src
+make test
+make lint
+make typecheck
+make yaml
+make compose
+make check
 ```
 
 Current local Trivy checks, if Trivy is installed:
 
 ```bash
-trivy fs --config security/trivy/trivy.yaml .
-trivy config --config security/trivy/trivy.yaml .
+make trivy-fs
+make trivy-config
 ```
 
-The previous Compose lab can still be rendered:
+Equivalent direct Python commands:
 
 ```bash
-cd onprem
-docker compose config
+python3 -m pytest tools/meridian-core/tests
+python3 -m ruff check tools/meridian-core
+python3 -m mypy tools/meridian-core/src
 ```
 
 The Compose lab is not the final MERIDIAN v2 runtime architecture.
