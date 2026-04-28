@@ -1,6 +1,6 @@
 # Security Policy
 
-Meridian is a public portfolio and homelab platform repository. It should not
+MERIDIAN is a public portfolio repository. It should not
 contain production secrets, private infrastructure inventories, real provider
 account identifiers, private keys, generated certificates, Terraform state,
 kubeconfigs, Vault tokens, or Datadog/API tokens.
@@ -23,11 +23,11 @@ or credentials.
   out of public docs unless they are intentionally sanitized.
 - Use placeholders such as `example.com`, `10.0.0.0/24`, or `<account-id>` for
   documentation examples.
-- Store deploy-time secrets in Vault, GitHub Actions secrets, SOPS, or another
-  documented secret-management path.
+- Store deploy-time secrets in GitHub Actions secrets, SOPS, Vault, or another
+  documented secret-management path when a deployment path exists.
 
 ## Current Scope
 
 The repository currently contains local lab configuration, CI workflows, security
-scanner configuration, design documentation, and scaffolding for future GitOps/IaC
-work. It is not a certified compliance implementation or a production deployment.
+scanner configuration, design documentation, and archived platform-era scaffolding.
+It is not a certified compliance implementation or a production deployment.

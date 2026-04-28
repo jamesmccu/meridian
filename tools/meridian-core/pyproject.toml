@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "meridian-core"
 version = "0.1.0"
-description = "Core observability tooling for the Meridian platform"
+description = "Core configuration diagnostics for MERIDIAN"
 requires-python = ">=3.12"
 dependencies = []
 

@@ -1,15 +1,16 @@
 # Runbooks
 
-This directory is reserved for operational runbooks.
+This directory is reserved for MERIDIAN v2 operational runbooks.
 
 Planned runbooks:
 
-- Vault initialization, unseal, and recovery.
-- TLS certificate renewal and failure handling.
-- Failed GitOps sync.
-- Failed public site deployment.
-- Log pipeline outage.
-- Metrics pipeline outage.
-- Vulnerability finding triage.
-- High CPU or memory pressure on a homelab node.
-- Backup and restore drill.
+- Falco sensor not producing events.
+- Vector route failure.
+- Quickwit ingest or search failure.
+- Detection rule fires unexpectedly.
+- Synthetic detection test fails.
+- Trivy finding triage.
+- Enrichment service error handling.
+
+Runbooks should focus on the runtime detection pipeline, not on broad platform
+operations.

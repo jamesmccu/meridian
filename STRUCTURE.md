@@ -1,79 +1,71 @@
 # Repository Structure
 
-```
-meridian/
+```text
+MERIDIAN/
 ├── .github/
 │   └── workflows/
-│       ├── build-sign.yml          # Container build + Cosign keyless signing
-│       ├── lint.yml                 # Python lint, type checks, and tests
+│       ├── build-sign.yml          # meridian-core image build/sign workflow
+│       ├── lint.yml                # Python lint, type checks, and tests
 │       ├── trivy-scan.yml          # Trivy filesystem, image, and config scans
-│       └── validate-manifests.yml  # YAML validation for all manifests
-├── aws/
-│   └── vault/
-│       └── config/vault.hcl        # Vault server config for AWS plane (planned)
+│       └── validate-manifests.yml  # YAML validation
 ├── docs/
-│   ├── adr/
-│   │   └── 0001-homelab-first-platform.md
-│   ├── runbooks/
-│   │   └── README.md
-│   ├── architecture.md             # Platform architecture and target direction
-│   ├── cloud-boundaries.md         # Why/when cloud belongs in Meridian
-│   ├── homelab-design.md           # Homelab-first design rationale
-│   ├── learning-map.md             # Skill goals mapped to platform work
-│   └── static-site-migration.md    # Plan for hosting a static site on Meridian
-├── onprem/
-│   ├── docker-compose.yml          # On-prem stack: Vault, VictoriaMetrics, Quickwit, Nginx, MongoDB
-│   ├── nginx/nginx.conf            # TLS reverse proxy config
-│   ├── node-exporter/web.yml       # Node Exporter TLS config
-│   └── vault/config/vault.hcl     # Vault server config for on-prem
+│   ├── architecture.md             # Active MERIDIAN v2 architecture
+│   ├── learning-map.md             # Detection engineering learning map
+│   └── runbooks/
+│       └── README.md               # Planned operational runbooks
+├── legacy/
+│   ├── docs/                       # Archived broad platform docs
+│   ├── gitops/                     # Archived GitOps placeholders
+│   ├── infra/                      # Archived IaC placeholders
+│   └── aws/                        # Archived AWS Vault placeholder
 ├── observability/
-│   ├── victoriametrics/
-│   │   └── prometheus.yml          # VictoriaMetrics scrape config
 │   ├── quickwit/
-│   │   └── quickwit.yaml           # Quickwit index and ingest config
-│   └── otel/
-│       ├── fluent-bit.conf         # Fluent Bit log forwarding config
-│       └── vector.yaml             # Vector pipeline config
+│   │   └── quickwit.yaml           # Searchable event backend config
+│   ├── otel/
+│   │   ├── fluent-bit.conf         # Legacy log forwarding config
+│   │   └── vector.yaml             # Event/log routing config
+│   └── victoriametrics/
+│       └── prometheus.yml          # Legacy metrics scrape config
+├── onprem/
+│   ├── docker-compose.yml          # Legacy Compose lab
+│   ├── nginx/nginx.conf            # Legacy TLS reverse proxy config
+│   ├── node-exporter/web.yml       # Legacy Node Exporter TLS config
+│   └── vault/config/vault.hcl      # Legacy Vault config
 ├── security/
-│   └── README.md                   # Security tooling overview
-├── gitops/
-│   ├── apps/
-│   │   └── README.md               # Future hosted application desired state
-│   ├── helm/
-│   │   └── meridian-chart/
-│   │       ├── Chart.yaml
-│   │       └── values.yaml
-│   ├── platform/
-│   │   └── README.md               # Future platform component desired state
-│   └── README.md
-├── infra/
-│   ├── ansible/
-│   │   └── README.md               # Future homelab host bootstrap
-│   ├── opentofu/
-│   │   ├── aws/
-│   │   │   └── README.md           # Future AWS cloud primitives
-│   │   ├── gcp/
-│   │   │   └── README.md           # Optional future GCP experiments
-│   │   └── README.md
-│   └── README.md
+│   ├── README.md                   # Active security scope
+│   └── trivy/
+│       ├── README.md
+│       └── trivy.yaml
 ├── tools/
-│   └── meridian-core/              # Core Python library for platform configuration
-│       └── src/meridian_core/__main__.py
-├── README.md                       # Project overview
-├── SECURITY.md                     # Public security policy
-├── MIGRATION_STATUS.md             # Multi-repo migration status
-├── RELEASE_NOTES.md                # Milestone summaries
-├── STRUCTURE.md                    # This file
-└── CHANGELOG.md                    # Change history
+│   └── meridian-core/              # Current Python diagnostics package
+├── README.md
+├── SECURITY.md
+├── RELEASE_NOTES.md
+├── STRUCTURE.md
+└── CHANGELOG.md
 ```
 
-## Environments
+## Active Scope
 
-| Directory | Environment | Runtime | Status |
-|---|---|---|---|
-| `onprem/` | On-premises | docker-compose | Active — current foundation |
-| `gitops/` | Homelab Kubernetes | Helm / future GitOps | Scaffolded |
-| `infra/ansible/` | Homelab hosts | Ansible | Planned |
-| `infra/opentofu/aws/` | AWS | OpenTofu | Planned |
-| `infra/opentofu/gcp/` | GCP | OpenTofu | Optional future path |
-| `aws/` | AWS | Provider-native services / future k3s experiments | Planned — cloud security and platform primitives |
+MERIDIAN v2 is focused on Kubernetes runtime detection engineering.
+
+Active areas:
+
+- detection architecture documentation
+- security scanning CI
+- Quickwit and event-routing configuration
+- Python diagnostics package
+
+Planned active areas:
+
+- Falco rules
+- detection catalog
+- sample events
+- synthetic detection tests
+- Python enrichment and reporting
+- Kubernetes deployment profiles
+
+## Legacy Scope
+
+The `legacy/` directory contains earlier platform-era concepts. These files are
+kept for context only and should not be read as active implementation.
