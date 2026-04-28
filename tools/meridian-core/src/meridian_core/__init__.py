@@ -1,3 +1,3 @@
-"""Meridian Core — observability tooling for the Meridian platform."""
+"""MERIDIAN core diagnostics."""
 
 __version__ = "0.1.0"

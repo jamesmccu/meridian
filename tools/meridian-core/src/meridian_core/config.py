@@ -1,18 +1,12 @@
-"""
-config.py — Centralized configuration for the Meridian platform.
-
-All tools in the Meridian project call get_config() instead of calling
-os.getenv() directly. Defaults point to internal DNS names used across
-the platform. Any value can be overridden by setting the corresponding
-environment variable before the function is called.
-"""
+"""Centralized configuration for MERIDIAN diagnostics."""
 import os
 
 
 def get_config() -> dict[str, str]:
     """Read platform config from environment variables with sensible defaults."""
     return {
-        # Vault — secrets management (AWS, KMS auto-unseal)
+        # Legacy lab services. These defaults are retained until the v2 detection
+        # pipeline replaces the earlier platform configuration.
         "vault_addr": os.getenv(
             "MERIDIAN_VAULT_ADDR",
             "https://vault.meridian.local:8200",
@@ -22,13 +16,10 @@ def get_config() -> dict[str, str]:
             "/certs/rootCA.pem",
         ),
 
-        # VictoriaMetrics — long-term metrics storage (GCP)
         "victoriametrics_url": os.getenv(
             "MERIDIAN_VICTORIAMETRICS_URL",
             "https://victoriametrics.meridian.local:8428",
         ),
-
-        # Quickwit — log indexing and search (GCP)
         "quickwit_url": os.getenv(
             "MERIDIAN_QUICKWIT_URL",
             "https://quickwit.meridian.local:7280",
