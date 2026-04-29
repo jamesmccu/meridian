@@ -17,6 +17,15 @@ MERIDIAN/
 │   ├── threat-model.md             # Initial threat model
 │   └── runbooks/
 │       └── README.md               # Planned operational runbooks
+├── diagrams/
+│   └── README.md                   # Placeholder for reviewed lab diagrams
+├── labs/
+│   ├── 01-network-segmentation/    # Segmentation learning task
+│   ├── 02-secure-connectivity/     # Branch-to-HQ connectivity learning task
+│   ├── 03-host-hardening/          # Hardening learning task
+│   ├── 04-telemetry-detection/     # Retained v2 telemetry/detection path
+│   ├── 05-policy-as-code/          # Policy check learning task
+│   └── README.md
 ├── observability/
 │   ├── quickwit/
 │   │   └── quickwit.yaml           # Searchable event backend config

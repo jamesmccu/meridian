@@ -16,6 +16,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
   connectivity, host hardening, telemetry, detection, and policy-as-code.
 - Added threat model, roadmap, interview positioning, and design-decision docs
   to explain the pivot and preserve useful v2 material.
+- Added initial lab module scaffolds, learning tasks, and diagrams placeholder
+  for the MERIDIAN LABS roadmap.
 - Renamed `meridian-core` to `meridian-detect` and added a CLI scaffold for
   current config output and planned detection workflow commands.
 - Removed archived platform-era material from the default branch after tagging it
