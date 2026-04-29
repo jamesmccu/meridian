@@ -1,240 +1,122 @@
-# MERIDIAN
+# MERIDIAN LABS
 
-**Kubernetes runtime detection engineering lab.**
+Hands-on distributed office security lab for modeling how small branch offices
+connect securely to a main office and cloud services.
 
-MERIDIAN is being repositioned as a focused platform for building, testing, and
-validating runtime security detections in Kubernetes environments. The project is
-intended to be platform-agnostic: the core detection workflow should work on k3s,
-kind, self-managed Kubernetes, EKS, GKE, AKS, or any cluster that can run the
-required sensor and event pipeline.
+MERIDIAN LABS keeps the repository name `MERIDIAN` and pivots the project from a
+Kubernetes runtime detection-only lab into a broader security architecture lab.
+The retained v2 detection and telemetry work becomes one module in the new lab
+rather than the entire project.
 
 This repository is public. Do not commit private keys, certificates, tokens,
-Terraform state, kubeconfigs, Vault tokens, homelab IP inventories, or provider
-account identifiers.
+Terraform state, kubeconfigs, Vault tokens, homelab IP inventories, provider
+account identifiers, or real customer data.
 
----
+## Why This Exists
+
+Many security engineering roles require practical judgment across network
+segmentation, secure connectivity, endpoint and host controls, telemetry,
+detection, and automation. MERIDIAN LABS is designed to make those decisions
+visible in a small but realistic environment.
+
+The goal is not to simulate an enterprise at full scale. The goal is to build a
+clear, reviewable lab that demonstrates how a growing company can secure small
+offices that depend on HQ services and cloud applications.
+
+## Scenario
+
+A growing company has multiple small offices connected to HQ and cloud services.
+The initial model is intentionally compact:
+
+```text
+Branch Office A
+  employee subnet
+  guest subnet
+  local service
+  secure tunnel to HQ
+
+Branch Office B
+  employee subnet
+  guest subnet
+  local service
+  secure tunnel to HQ
+
+HQ / Main Office
+  admin workstation
+  identity-like service placeholder
+  internal app
+  logging / telemetry collector
+
+Cloud
+  public app placeholder
+  monitoring placeholder
+```
+
+## Security Problems Demonstrated
+
+MERIDIAN LABS is organized around practical controls:
+
+- network segmentation between employee, guest, service, HQ, and cloud zones
+- secure branch-to-HQ connectivity
+- baseline host hardening and configuration management
+- telemetry collection, detection logic, and local reporting
+- policy-as-code and CI checks for configuration hygiene
+- architecture documentation and threat modeling
+
+Existing MERIDIAN v2 telemetry assets are preserved as future input for
+`labs/04-telemetry-detection/`.
+
+## Senior Engineering Signal
+
+The lab maps to real senior security engineering work by showing:
+
+- architecture tradeoffs and trust boundaries before tool selection
+- control-plane versus branch-office responsibilities
+- local-first implementation choices that can later map to enterprise tooling
+- automation boundaries that avoid hiding important learning work
+- detection and incident-readiness thinking tied to network design
+- CI/CD hygiene for security configuration without making CI the product
 
 ## Current Status
 
-MERIDIAN v2 is a repositioning effort. The current repository contains useful
-building blocks, but the full detection loop is not implemented yet.
+MERIDIAN LABS is in the repositioning and scaffold stage.
 
-Implemented or configured:
+Implemented or retained:
 
-- Trivy CI scanning for filesystem, image, and config checks.
-- GitHub Actions quality checks for Python, YAML, and security scanning.
-- Quickwit configuration for searchable event storage.
-- Vector and Fluent Bit configuration that can support event routing.
-- Docker Compose lab services from the previous platform iteration.
-- A small Python package, `meridian-detect`, with a CLI scaffold for
-  configuration output and planned detection workflows.
+- Trivy CI scanning for filesystem, image, and configuration checks.
+- Python lint, type check, and test workflow for `meridian-detect`.
+- Quickwit, Vector, Fluent Bit, and VictoriaMetrics configuration from v2.
+- Docker Compose lab services from earlier iterations.
+- `tools/meridian-detect`, a small Python CLI scaffold for future telemetry,
+  enrichment, and reporting workflows.
+- Documentation for the distributed office architecture, threat model, roadmap,
+  design decisions, and interview positioning.
 
-Planned for v2:
+Planned next:
 
-- Falco runtime detection rules.
-- A Kubernetes lab profile for local testing.
-- Synthetic adversary/test scripts.
-- Sample Falco events.
-- MITRE ATT&CK mapping.
-- Python enrichment and correlation for runtime events.
-- A detection catalog with validation status.
-
-Not active v2 scope:
-
-- multi-cloud platform architecture
-- static site hosting
-- broad SRE observability platform
-- Vault-backed secrets platform
-- GitOps delivery platform
-- service mesh
-- compliance certification claims
-
-Earlier platform-oriented material was archived in the
-`meridian-v1-platform-archive` Git tag and is no longer part of the default
-branch.
-
----
-
-## Project Goal
-
-Security detections should be testable. MERIDIAN v2 focuses on a small, repeatable
-workflow:
-
-1. Write a runtime detection.
-2. Trigger representative behavior in Kubernetes.
-3. Capture the event.
-4. Enrich and normalize the event.
-5. Map it to MITRE ATT&CK.
-6. Validate that the expected detection fired.
-7. Produce a searchable finding or report.
-
-The goal is not to build a generic observability platform. The goal is to make
-runtime detection engineering concrete and reviewable.
-
----
-
-## Target Architecture
-
-The v2 architecture should stay intentionally small:
-
-```text
-Kubernetes cluster
-  |
-  | runtime activity
-  v
-Falco
-  |
-  | JSON events
-  v
-Vector
-  |
-  v
-Quickwit
-  |
-  v
-Python enrichment / correlation
-  |
-  v
-Detection report, alert payload, or metrics
-```
-
-Core components:
-
-| Component | Role | Current State |
-|---|---|---|
-| Kubernetes | Runtime environment for detection testing | Planned |
-| Falco | Runtime event sensor and rule engine | Planned |
-| Vector | Event routing and normalization pipeline | Config present |
-| Quickwit | Searchable event backend | Config present |
-| Python tooling | Enrichment, correlation, reporting | Minimal config package only |
-| Trivy | CI vulnerability and config scanning | Configured |
-
-The default local target should be k3s or kind. Provider-specific profiles for
-EKS, GKE, or AKS should be adapters, not required architecture.
-
----
+- lab-owned topology and segmentation examples
+- secure branch connectivity exercise
+- host hardening exercise
+- local telemetry/detection exercise built from the retained v2 assets
+- policy-as-code and CI validation exercise
+- incident-response scenarios after the first controls exist
 
 ## Repository Structure
 
 ```text
 MERIDIAN/
-├── .github/workflows/        # CI quality, validation, and security scans
-├── docs/                     # Active v2 design and runbook docs
-├── observability/            # Quickwit and event pipeline configuration
-├── onprem/                   # Existing Compose lab from earlier iteration
+├── docs/                     # Architecture, threat model, roadmap, decisions
+├── labs/                     # Hands-on lab modules and learning tasks
+├── observability/            # Retained v2 event pipeline configuration
+├── onprem/                   # Retained Compose/Vault/Nginx reference material
 ├── security/                 # Security tooling docs and Trivy config
-├── tools/meridian-detect/    # Current Python CLI; planned enrichment home
+├── tools/meridian-detect/    # Retained Python telemetry/detection scaffold
 ├── README.md
 ├── SECURITY.md
 └── STRUCTURE.md
 ```
 
-Expected future v2 structure:
-
-```text
-detections/
-  falco/
-  mitre-map.yml
-  tests/
-
-events/
-  samples/
-
-deploy/
-  profiles/
-    local-k3s/
-    eks/
-    gke/
-    aks/
-
-tools/
-  meridian-detect/
-```
-
-These directories should be added only when there is working content behind them.
-
----
-
-## Alerting And Observability
-
-The v2 proof of concept should produce evidence in three forms:
-
-- searchable events in Quickwit
-- enriched JSON findings from Python tooling
-- detection metrics or a generated report showing rule hits and test results
-
-Recommended alert outputs:
-
-- local JSON report first
-- webhook or Slack-style payload later
-- Alertmanager or Datadog export only after the local detection loop works
-
-Recommended metrics:
-
-- `meridian_detection_events_total`
-- `meridian_detection_events_by_rule`
-- `meridian_detection_events_by_severity`
-- `meridian_detection_events_by_mitre_tactic`
-- `meridian_enrichment_errors_total`
-- `meridian_test_cases_passed_total`
-- `meridian_test_cases_failed_total`
-
-Metrics are useful for the POC, but they should support the detection workflow
-rather than become a separate observability platform.
-
----
-
-## Platform-Agnostic Design
-
-MERIDIAN should not depend on one cloud provider or one Kubernetes distribution.
-
-Design rules:
-
-- Keep base manifests free of provider-specific annotations.
-- Put EKS, GKE, AKS, and local settings in separate profiles or overlays.
-- Use Falco JSON as the primary event contract.
-- Treat cloud audit logs as future inputs, not required v2 dependencies.
-- Keep Quickwit as the default local backend.
-- Make external alert sinks optional.
-
-This keeps the project relevant to on-prem, managed Kubernetes, and public-sector
-or enterprise environments without over-building cloud-specific features.
-
----
-
-## Security Scope
-
-Current active security tooling:
-
-- Trivy CI scanning.
-- Public security policy.
-- Ignore rules for local/private state.
-
-Planned detection scope:
-
-- container escape indicators
-- suspicious shell execution
-- credential file access
-- Kubernetes service account token access
-- unexpected egress patterns
-- crypto-mining indicators
-- network tooling inside workload containers
-
-Each detection should eventually include:
-
-- rule ID
-- description
-- severity
-- data source
-- MITRE ATT&CK tactic and technique
-- expected event fields
-- false-positive notes
-- synthetic test coverage
-- validation status
-
----
-
-## Usage
+## Run The Current Checks
 
 Bootstrap a local development environment:
 
@@ -262,9 +144,9 @@ meridian-detect config
 python3 -m meridian_detect --help
 ```
 
-The `validate`, `enrich`, and `report` subcommands are placeholders for the
-future detection workflow. They intentionally return a non-zero exit code until
-real detection logic exists.
+The `validate`, `enrich`, and `report` subcommands are placeholders for future
+telemetry and detection workflows. They intentionally return a non-zero exit code
+until real logic exists.
 
 Current local Trivy checks, if Trivy is installed:
 
@@ -273,46 +155,30 @@ make trivy-fs
 make trivy-config
 ```
 
-Equivalent direct Python commands:
-
-```bash
-python3 -m pytest tools/meridian-detect/tests
-python3 -m ruff check tools/meridian-detect
-python3 -m mypy tools/meridian-detect/src
-```
-
-The Compose lab is not the final MERIDIAN v2 runtime architecture.
-
----
-
 ## Roadmap
 
-Near term:
+- Phase 1: topology and segmentation
+- Phase 2: VPN / secure connectivity
+- Phase 3: host hardening
+- Phase 4: telemetry and detection
+- Phase 5: policy-as-code / CI checks
+- Phase 6: incident-response scenarios
 
-- rewrite `security/README.md` around local detection ownership
-- add Falco rule directory
-- add sample Falco JSON events
-- define detection catalog schema
-- add MITRE ATT&CK mapping
-- build Python event enrichment/report output
+See [docs/roadmap.md](docs/roadmap.md) for the detailed phased plan.
 
-Later:
+## Intentionally Out Of Scope
 
-- local k3s deployment profile
-- synthetic adversary test scripts
-- Quickwit saved queries or documented searches
-- optional metrics export
-- optional provider profiles for EKS, GKE, and AKS
+MERIDIAN LABS is not trying to be:
 
-Out of scope until the detection loop works:
+- a full restaurant-specific proof of concept
+- a production enterprise network
+- an offensive security toolkit
+- a cloud-provider-specific reference architecture
+- a compliance certification claim
+- a service mesh, GitOps platform, or generic observability platform
 
-- cloud security planes
-- GitOps platform delivery
-- Datadog integration
-- OPA/Gatekeeper enforcement
-- compliance mapping
-
----
+Any detection or traffic simulation must be local and safe. Any scanning must be
+limited to lab-owned local containers or virtual machines.
 
 ## License
 

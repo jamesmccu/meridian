@@ -9,8 +9,12 @@ MERIDIAN/
 │       ├── trivy-scan.yml          # Trivy filesystem, image, and config scans
 │       └── validate-manifests.yml  # YAML validation
 ├── docs/
-│   ├── architecture.md             # Active MERIDIAN v2 architecture
-│   ├── learning-map.md             # Detection engineering learning map
+│   ├── architecture.md             # MERIDIAN LABS distributed office model
+│   ├── design-decisions.md         # Repo audit and pivot decisions
+│   ├── interview-positioning.md    # Senior-role discussion guide
+│   ├── learning-map.md             # Retained v2 learning map
+│   ├── roadmap.md                  # Phased lab roadmap
+│   ├── threat-model.md             # Initial threat model
 │   └── runbooks/
 │       └── README.md               # Planned operational runbooks
 ├── observability/
@@ -42,26 +46,28 @@ MERIDIAN/
 
 ## Active Scope
 
-MERIDIAN v2 is focused on Kubernetes runtime detection engineering.
+MERIDIAN LABS is focused on distributed office security architecture and
+implementation practice.
 
 Active areas:
 
-- detection architecture documentation
+- architecture and threat-model documentation
+- branch, HQ, and cloud lab design
 - security scanning CI
-- Quickwit and event-routing configuration
-- Python CLI scaffold for detection workflow commands
+- retained Quickwit and event-routing configuration
+- retained Python CLI scaffold for telemetry/detection workflow commands
 
 Planned active areas:
 
-- Falco rules
-- detection catalog
-- sample events
-- synthetic detection tests
-- Python enrichment and reporting
-- Kubernetes deployment profiles
+- topology and segmentation lab
+- secure connectivity lab
+- host hardening lab
+- telemetry and detection lab
+- policy-as-code lab
+- incident-response scenarios
 
 ## Archived Scope
 
 Earlier platform-era concepts were archived in the
 `meridian-v1-platform-archive` Git tag. They are not part of the default branch
-because they do not support the v2 detection engineering scope.
+because they do not support the MERIDIAN LABS scope.
