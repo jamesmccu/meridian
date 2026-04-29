@@ -317,3 +317,6 @@ Out of scope until the detection loop works:
 ## License
 
 MIT
+
+---
+*Last reviewed: 2026-04-28*
