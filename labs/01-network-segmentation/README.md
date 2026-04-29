@@ -14,8 +14,13 @@ Create a small topology that distinguishes:
 
 ## Current State
 
-Scaffold only. The first real segmentation rules are intentionally left as a
-hands-on learning task.
+Flow table defined. The first real segmentation rules are intentionally left as
+a hands-on learning task.
+
+## Flow Table
+
+See `flows.md` for the initial zone model, allowed flows, denied flows,
+validation plan, assumptions, and local-lab limitations.
 
 ## Expected Evidence
 

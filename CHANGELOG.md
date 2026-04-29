@@ -18,6 +18,9 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
   to explain the pivot and preserve useful v2 material.
 - Added initial lab module scaffolds, learning tasks, and diagrams placeholder
   for the MERIDIAN LABS roadmap.
+- Added the first Lab 01 network segmentation flow table to define zones,
+  allowed flows, denied flows, validation plan, assumptions, and local-lab
+  limitations before implementation.
 - Renamed `meridian-core` to `meridian-detect` and added a CLI scaffold for
   current config output and planned detection workflow commands.
 - Removed archived platform-era material from the default branch after tagging it
