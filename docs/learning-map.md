@@ -1,46 +1,46 @@
 # Learning Map
 
-MERIDIAN v2 is optimized for detection engineering and Kubernetes runtime
-security.
+MERIDIAN LABS is optimized for practical security architecture and engineering
+practice across distributed branch offices, HQ services, and cloud dependencies.
 
 ## Primary Skill Targets
 
-| Area | MERIDIAN v2 Practice |
+| Area | MERIDIAN LABS Practice |
 |---|---|
-| Detection engineering | Write, test, tune, and document runtime detections. |
-| Kubernetes security | Exercise detections against Kubernetes workload behavior. |
-| Linux/runtime security | Reason about process, file, network, and container events. |
-| Security automation | Enrich events and produce findings with Python. |
-| Security data engineering | Route structured events into a searchable backend. |
-| Network/security systems thinking | Detect suspicious egress, tooling, and lateral movement patterns. |
+| Network security | Model zones, routes, allowed flows, denied flows, and branch-to-HQ access. |
+| Infrastructure security | Apply host and service hardening after defining the baseline topology. |
+| Security automation | Use scripts, Ansible, and CI checks where they make controls repeatable. |
+| Telemetry and detection | Preserve and extend v2 event pipeline and `meridian-detect` work. |
+| Secure system design | Document trust boundaries, abuse cases, assumptions, and limitations. |
+| Incident readiness | Build detection evidence and runbooks from local, safe scenarios. |
 
 ## What To Build Personally
 
-The most valuable learning work should be done by the repo owner:
+The highest-learning work should be done by the repo owner:
 
-- Detection catalog design.
-- Falco rule logic.
-- Synthetic triggers.
-- Sample event capture.
-- MITRE ATT&CK mapping.
-- Python enrichment and correlation.
-- False-positive analysis.
+- first firewall or segmentation rules
+- first VPN or secure connectivity implementation
+- first Ansible hardening playbook
+- first Python log parser or correlator
+- first GitHub Actions policy check
+- first threat-model refinement after observing the working lab
+- first architecture diagram after the topology is understood
 
 ## What Can Be Mechanical Cleanup
 
 Lower-learning-value work:
 
-- Moving legacy docs.
-- Rewriting old platform positioning.
-- Updating repository structure docs.
-- Keeping CI and public hygiene clean.
+- moving old positioning into the new documentation structure
+- creating lab folders and placeholder READMEs
+- writing guided task prompts
+- keeping CI and public hygiene clean
 
 ## Proof Of Competence
 
-A strong MERIDIAN v2 detection should show the full loop:
+A strong MERIDIAN LABS module should show the full loop:
 
 ```text
-rule -> trigger -> event -> enrichment -> ATT&CK mapping -> finding -> validation
+design intent -> implementation -> validation -> telemetry -> documented tradeoff
 ```
 
-One complete validated detection is more valuable than many untested tools.
+One complete validated control path is more valuable than many untested tools.
