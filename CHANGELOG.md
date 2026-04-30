@@ -21,11 +21,16 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Added the first Lab 01 network segmentation flow table to define zones,
   allowed flows, denied flows, validation plan, assumptions, and local-lab
   limitations before implementation.
+- Reframed lab folders and documentation around problem-driven security
+  engineering labs: segmentation and trust boundaries, secure connectivity and
+  remote access, hardening and baseline enforcement, telemetry/detection/
+  response, and policy-as-code validation.
 - Renamed `meridian-core` to `meridian-detect` and added a CLI scaffold for
   current config output and planned detection workflow commands.
 - Removed archived platform-era material from the default branch after tagging it
   as `meridian-v1-platform-archive`.
-- Repositioned MERIDIAN as a Kubernetes runtime detection engineering project.
+- Previously repositioned MERIDIAN as a Kubernetes runtime detection engineering
+  project before the broader MERIDIAN LABS pivot.
 - Rewrote README around the v2 detection workflow.
 - Rewrote active architecture and learning-map docs.
 - Rewrote `security/README.md` to make this repository the future home for
@@ -44,9 +49,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Legacy Compose lab for reference.
 
 ### Planned
-- Falco runtime rule set.
-- Detection catalog schema.
-- Sample Falco events.
-- Synthetic detection validation tests.
-- MITRE ATT&CK mapping.
-- Python event enrichment and report output.
+- First validated segmentation implementation and evidence file.
+- Secure connectivity and remote-access exercise.
+- Host hardening and baseline-enforcement exercise.
+- Telemetry, detection, and response exercise using retained v2 assets.
+- Policy-as-code and automated-validation exercise.

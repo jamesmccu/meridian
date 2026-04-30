@@ -64,7 +64,7 @@ MERIDIAN LABS is organized around practical controls:
 - architecture documentation and threat modeling
 
 Existing MERIDIAN v2 telemetry assets are preserved as future input for
-`labs/04-telemetry-detection/`.
+`labs/04-telemetry-detection-response/`.
 
 ## Senior Engineering Signal
 
@@ -94,11 +94,11 @@ Implemented or retained:
 
 Planned next:
 
-- lab-owned topology and segmentation examples
-- secure branch connectivity exercise
-- host hardening exercise
-- local telemetry/detection exercise built from the retained v2 assets
-- policy-as-code and CI validation exercise
+- lab-owned network segmentation and trust-boundary examples
+- secure connectivity and remote-access exercise
+- host hardening and baseline-enforcement exercise
+- local telemetry, detection, and response exercise built from retained v2 assets
+- policy-as-code and automated validation exercise
 - incident-response scenarios after the first controls exist
 
 ## Repository Structure
@@ -106,7 +106,7 @@ Planned next:
 ```text
 MERIDIAN/
 ├── docs/                     # Architecture, threat model, roadmap, decisions
-├── labs/                     # Hands-on lab modules and learning tasks
+├── labs/                     # Problem-driven security engineering labs
 ├── observability/            # Retained v2 event pipeline configuration
 ├── onprem/                   # Retained Compose/Vault/Nginx reference material
 ├── security/                 # Security tooling docs and Trivy config
@@ -157,11 +157,11 @@ make trivy-config
 
 ## Roadmap
 
-- Phase 1: topology and segmentation
-- Phase 2: VPN / secure connectivity
-- Phase 3: host hardening
-- Phase 4: telemetry and detection
-- Phase 5: policy-as-code / CI checks
+- Phase 1: network segmentation and trust boundaries
+- Phase 2: secure connectivity and remote access
+- Phase 3: host hardening and baseline enforcement
+- Phase 4: telemetry, detection, and response
+- Phase 5: policy as code and automated validation
 - Phase 6: incident-response scenarios
 
 See [docs/roadmap.md](docs/roadmap.md) for the detailed phased plan.
@@ -174,7 +174,7 @@ MERIDIAN LABS is not trying to be:
 - a production enterprise network
 - an offensive security toolkit
 - a cloud-provider-specific reference architecture
-- a compliance certification claim
+- a compliance assurance claim
 - a service mesh, GitOps platform, or generic observability platform
 
 Any detection or traffic simulation must be local and safe. Any scanning must be

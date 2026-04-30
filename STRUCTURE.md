@@ -20,11 +20,11 @@ MERIDIAN/
 ├── diagrams/
 │   └── README.md                   # Placeholder for reviewed lab diagrams
 ├── labs/
-│   ├── 01-network-segmentation/    # Segmentation learning task
-│   ├── 02-secure-connectivity/     # Branch-to-HQ connectivity learning task
-│   ├── 03-host-hardening/          # Hardening learning task
-│   ├── 04-telemetry-detection/     # Retained v2 telemetry/detection path
-│   ├── 05-policy-as-code/          # Policy check learning task
+│   ├── 01-network-segmentation-trust-boundaries/
+│   ├── 02-secure-connectivity-remote-access/
+│   ├── 03-host-hardening-baseline-enforcement/
+│   ├── 04-telemetry-detection-response/
+│   ├── 05-policy-as-code-automated-validation/
 │   └── README.md
 ├── observability/
 │   ├── quickwit/
@@ -68,11 +68,11 @@ Active areas:
 
 Planned active areas:
 
-- topology and segmentation lab
-- secure connectivity lab
-- host hardening lab
-- telemetry and detection lab
-- policy-as-code lab
+- network segmentation and trust-boundaries lab
+- secure connectivity and remote-access lab
+- host hardening and baseline-enforcement lab
+- telemetry, detection, and response lab
+- policy-as-code and automated-validation lab
 - incident-response scenarios
 
 ## Archived Scope

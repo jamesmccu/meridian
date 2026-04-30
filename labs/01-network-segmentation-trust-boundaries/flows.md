@@ -1,4 +1,4 @@
-# Lab 01 Flow Table
+# Network Segmentation & Trust Boundaries Flow Table
 
 This document defines the first intended segmentation behavior for MERIDIAN
 LABS. It is design intent only. No firewall, Docker network, VPN, or routing
