@@ -1,5 +1,8 @@
 # Interview Positioning
 
+> Development note: this document is retained as positioning context. It is not
+> the platform architecture source of truth.
+
 MERIDIAN LABS is designed to be discussed as a practical security engineering
 project, not as a finished product. The strongest signal is the decision trail:
 what was modeled, what was intentionally simplified, what was validated, and
@@ -14,6 +17,8 @@ The project demonstrates network security operations by modeling:
 - secure branch-to-HQ connectivity
 - validation steps for segmentation behavior
 - telemetry that supports investigation instead of only deployment success
+- problem-driven labs for trust boundaries, connectivity, telemetry, and
+  automated validation
 
 Good discussion points:
 
@@ -31,6 +36,7 @@ The project demonstrates infrastructure security by showing:
 - retained security scanning with Trivy
 - documentation of assumptions and limitations
 - safe handling of secrets and local lab state
+- baseline enforcement and drift-awareness thinking before broad automation
 
 Good discussion points:
 
@@ -46,6 +52,8 @@ The project demonstrates security automation through:
 - `meridian-detect` as a future telemetry and detection CLI
 - lightweight scripts only where they clarify repeatable validation
 - CI checks that support security review without becoming the primary artifact
+- small validation rules tied to specific risks instead of a large policy
+  platform introduced too early
 
 Good discussion points:
 
@@ -77,6 +85,8 @@ The project demonstrates secure design by documenting:
 - abuse cases and mitigations
 - control-plane versus branch responsibilities
 - technologies selected for the smallest useful implementation
+- how each lab starts from an operational security problem rather than a tool
+  selection exercise
 
 Good discussion points:
 

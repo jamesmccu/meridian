@@ -1,0 +1,67 @@
+schema_version: "0.1"
+status: initial_contract
+description: >
+  Local-first enterprise simulation topology for MERIDIAN LABS. This file
+  describes intended platform zones and relationships; it does not provision
+  infrastructure yet.
+
+sites:
+  - id: branch-a
+    name: Branch Office A
+    status: planned
+    zones:
+      - branch-employee
+      - branch-guest
+      - branch-service
+    notes:
+      - First branch pattern to validate before duplicating to other branches.
+  - id: branch-b
+    name: Branch Office B
+    status: planned
+    zones:
+      - branch-b-employee
+      - branch-b-guest
+      - branch-b-service
+    notes:
+      - Deferred until Branch A segmentation and connectivity are validated.
+  - id: hq
+    name: HQ Control Plane
+    status: planned
+    zones:
+      - hq-admin
+      - hq-services
+      - hq-telemetry
+    notes:
+      - Central control-plane services for administration, identity, internal
+        applications, and telemetry.
+  - id: cloud
+    name: Cloud And External Services
+    status: planned
+    zones:
+      - cloud-public
+    notes:
+      - Local placeholder for cloud-facing dependencies until cloud-security
+        baselines are implemented.
+
+existing_implementation_references:
+  - path: onprem/docker-compose.yml
+    role: Existing Compose reference services retained in place.
+  - path: observability/
+    role: Existing telemetry configuration retained in place.
+  - path: labs/01-network-segmentation-trust-boundaries/flows.md
+    role: Original network flow design intent.
+
+validation_expectations:
+  - id: topology-config-parses
+    status: planned
+    evidence_path: core-platform/validation/
+  - id: compose-reference-config-validates
+    status: retained
+    command: docker compose -f onprem/docker-compose.yml config --quiet
+
+limitations:
+  - This topology is a contract, not an implementation.
+  - Docker networking, when used, will model control intent rather than
+    production firewall feature parity.
+  - No real credentials, customer data, or external targets are part of this
+    topology.

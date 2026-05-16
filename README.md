@@ -1,120 +1,135 @@
 # MERIDIAN LABS
 
-Hands-on distributed office security lab for modeling how small branch offices
-connect securely to a main office and cloud services.
+MERIDIAN LABS is a modular enterprise security infrastructure simulation
+platform. It models a compact distributed enterprise with branch offices, an HQ
+control plane, cloud service dependencies, identity and access boundaries,
+telemetry, detection engineering, and incident-response workflows.
 
-MERIDIAN LABS keeps the repository name `MERIDIAN` and pivots the project from a
-Kubernetes runtime detection-only lab into a broader security architecture lab.
-The retained v2 detection and telemetry work becomes one module in the new lab
-rather than the entire project.
+The repository name remains `MERIDIAN`. The active project identity is MERIDIAN
+LABS.
 
 This repository is public. Do not commit private keys, certificates, tokens,
 Terraform state, kubeconfigs, Vault tokens, homelab IP inventories, provider
 account identifiers, or real customer data.
 
-## Why This Exists
+## Platform Intent
 
-Many security engineering roles require practical judgment across network
-segmentation, secure connectivity, endpoint and host controls, telemetry,
-detection, and automation. MERIDIAN LABS is designed to make those decisions
-visible in a small but realistic environment.
+MERIDIAN LABS is not a certification-prep repository. Certification topics can
+map indirectly to platform scenarios, but the primary unit of design is reusable
+security infrastructure:
 
-The goal is not to simulate an enterprise at full scale. The goal is to build a
-clear, reviewable lab that demonstrates how a growing company can secure small
-offices that depend on HQ services and cloud applications.
+- enterprise substrate and service topology
+- network segmentation and threat prevention
+- Kubernetes and container platform operations
+- cloud security baselines
+- identity and access controls
+- telemetry and observability
+- detection engineering
+- incident-response scenarios
+
+The platform is intentionally local-first while it is being built. Docker
+Compose, lightweight containers, structured configuration, Python tooling, and
+CI checks are acceptable foundations when they make a security control testable.
+Cloud, Kubernetes, and identity providers should be introduced only through
+clear module contracts and validation evidence.
 
 ## Scenario
 
-A growing company has multiple small offices connected to HQ and cloud services.
-The initial model is intentionally compact:
+A growing company has multiple small offices connected to HQ and selected cloud
+services. The initial model is compact:
 
 ```text
 Branch Office A
   employee subnet
   guest subnet
   local service
-  secure tunnel to HQ
+  secure path to HQ
 
 Branch Office B
   employee subnet
   guest subnet
   local service
-  secure tunnel to HQ
+  secure path to HQ
 
-HQ / Main Office
+HQ / Control Plane
   admin workstation
-  identity-like service placeholder
+  identity and access placeholder
   internal app
-  logging / telemetry collector
+  telemetry collector
 
-Cloud
+Cloud / External Services
   public app placeholder
   monitoring placeholder
 ```
 
-## Security Problems Demonstrated
-
-MERIDIAN LABS is organized around practical controls:
-
-- network segmentation between employee, guest, service, HQ, and cloud zones
-- secure branch-to-HQ connectivity
-- baseline host hardening and configuration management
-- telemetry collection, detection logic, and local reporting
-- policy-as-code and CI checks for configuration hygiene
-- architecture documentation and threat modeling
-
-Existing MERIDIAN v2 telemetry assets are preserved as future input for
-`labs/04-telemetry-detection/`.
-
-## Senior Engineering Signal
-
-The lab maps to real senior security engineering work by showing:
-
-- architecture tradeoffs and trust boundaries before tool selection
-- control-plane versus branch-office responsibilities
-- local-first implementation choices that can later map to enterprise tooling
-- automation boundaries that avoid hiding important learning work
-- detection and incident-readiness thinking tied to network design
-- CI/CD hygiene for security configuration without making CI the product
+The first implementation work should prove one branch and one HQ path before
+duplicating the pattern.
 
 ## Current Status
 
-MERIDIAN LABS is in the repositioning and scaffold stage.
+MERIDIAN LABS is in an initial platform-scaffold stage. Several implementation
+assets are retained from earlier MERIDIAN iterations, but not every platform
+domain is implemented yet.
 
 Implemented or retained:
 
 - Trivy CI scanning for filesystem, image, and configuration checks.
 - Python lint, type check, and test workflow for `meridian-detect`.
-- Quickwit, Vector, Fluent Bit, and VictoriaMetrics configuration from v2.
-- Docker Compose lab services from earlier iterations.
-- `tools/meridian-detect`, a small Python CLI scaffold for future telemetry,
-  enrichment, and reporting workflows.
-- Documentation for the distributed office architecture, threat model, roadmap,
-  design decisions, and interview positioning.
+- Quickwit, Vector, Fluent Bit, and VictoriaMetrics configuration.
+- Docker Compose reference services under `onprem/`.
+- `tools/meridian-detect`, a Python CLI scaffold for future telemetry,
+  enrichment, validation, and reporting workflows.
+- A working vertical slice that validates the segmentation flow contract,
+  validates a sample denied guest-access event, matches it to a detection rule,
+  and produces a report artifact.
+- Architecture, threat-model, roadmap, design-decision, and guided lab notes.
 
-Planned next:
+Initial scaffolds:
 
-- lab-owned topology and segmentation examples
-- secure branch connectivity exercise
-- host hardening exercise
-- local telemetry/detection exercise built from the retained v2 assets
-- policy-as-code and CI validation exercise
-- incident-response scenarios after the first controls exist
+- `core-platform/` defines early platform topology, service, network, and
+  validation contracts.
+- `network-security/` introduces segmentation and connectivity as platform
+  domains.
+- `container-platform/`, `cloud-security/`, `identity-access/`,
+  `detection-engineering/`, and `incident-response/` define target module
+  boundaries.
+- `observability/schemas/` introduces a first event schema contract.
 
-## Repository Structure
+## Module Map
 
-```text
-MERIDIAN/
-├── docs/                     # Architecture, threat model, roadmap, decisions
-├── labs/                     # Hands-on lab modules and learning tasks
-├── observability/            # Retained v2 event pipeline configuration
-├── onprem/                   # Retained Compose/Vault/Nginx reference material
-├── security/                 # Security tooling docs and Trivy config
-├── tools/meridian-detect/    # Retained Python telemetry/detection scaffold
-├── README.md
-├── SECURITY.md
-└── STRUCTURE.md
-```
+| Current Area | Current Role | Target Platform Domain |
+|---|---|---|
+| `core-platform/` | Initial scaffold for shared topology, services, networks, and validation. | Core enterprise substrate. |
+| `network-security/` | Initial scaffold plus structured segmentation flow contract. | Network segmentation, secure connectivity, and threat prevention. |
+| `container-platform/` | Initial scaffold only. | Kubernetes and container platform operations. |
+| `cloud-security/` | Initial scaffold only. | AWS/cloud security baselines and cloud control validation. |
+| `identity-access/` | Initial scaffold only. | Users, roles, service identities, access policies, and audit events. |
+| `observability/` | Retained Quickwit, Vector, Fluent Bit, and VictoriaMetrics configs plus schema scaffold. | Telemetry collection, routing, storage, and event schema contracts. |
+| `detection-engineering/` | Initial detections, sample-events, and reports scaffold. | Detection content, test events, validation, enrichment, and reporting. |
+| `incident-response/` | Initial runbook and scenario scaffold. | Investigation scenarios, response procedures, timelines, and lessons learned. |
+| `tools/meridian-detect/` | Existing Python CLI scaffold with tests and packaging. | Detection engineering tooling. |
+| `onprem/` | Existing Compose/Vault/Nginx reference implementation. | Candidate local substrate for `core-platform/`; preserved in place for now. |
+| `security/` | Trivy configuration and security scope notes. | Repository hygiene and future policy-as-code input. |
+| `labs/` | Legacy/current guided-lab content and design notes. | Migration source material for architecture-driven modules. |
+| `.github/workflows/` | Existing CI and scan workflows. | Platform validation and supply-chain hygiene. |
+
+## Existing Paths Preserved
+
+The current implementation directories remain intact during the platform
+reframe:
+
+- `observability/`
+- `onprem/`
+- `tools/`
+- `labs/`
+- `security/`
+- `scripts/`
+- `.github/`
+
+`labs/` is retained as legacy/current guided-lab content. It is not the long-term
+platform architecture source of truth. New architecture-driven contracts should
+land in the platform domains first, with compatibility notes added before any
+future moves.
 
 ## Run The Current Checks
 
@@ -155,27 +170,25 @@ make trivy-fs
 make trivy-config
 ```
 
-## Roadmap
+## Near-Term Platform Work
 
-- Phase 1: topology and segmentation
-- Phase 2: VPN / secure connectivity
-- Phase 3: host hardening
-- Phase 4: telemetry and detection
-- Phase 5: policy-as-code / CI checks
-- Phase 6: incident-response scenarios
-
-See [docs/roadmap.md](docs/roadmap.md) for the detailed phased plan.
+1. Prove the first local enterprise topology contract.
+2. Convert segmentation intent into validation evidence.
+3. Route one safe local event through a documented telemetry schema.
+4. Implement one detection/report workflow in `meridian-detect`.
+5. Add identity, container, cloud, and incident-response modules only when their
+   contracts and validation paths are clear.
 
 ## Intentionally Out Of Scope
 
 MERIDIAN LABS is not trying to be:
 
-- a full restaurant-specific proof of concept
 - a production enterprise network
+- a full cloud-provider reference architecture
+- a compliance assurance claim
 - an offensive security toolkit
-- a cloud-provider-specific reference architecture
-- a compliance certification claim
-- a service mesh, GitOps platform, or generic observability platform
+- a generic observability platform
+- a certification-prep repository
 
 Any detection or traffic simulation must be local and safe. Any scanning must be
 limited to lab-owned local containers or virtual machines.

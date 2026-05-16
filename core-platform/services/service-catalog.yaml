@@ -1,0 +1,98 @@
+schema_version: "0.1"
+status: initial_contract
+description: >
+  Initial service catalog for MERIDIAN LABS. Entries describe intended platform
+  services and current implementation references where they exist.
+
+services:
+  - id: branch-employee-client
+    domain: network-security
+    site: branch-a
+    zone: branch-employee
+    status: planned
+    purpose: Represents a managed branch employee workstation or workload.
+    current_reference: labs/01-network-segmentation-trust-boundaries/flows.md
+  - id: branch-guest-client
+    domain: network-security
+    site: branch-a
+    zone: branch-guest
+    status: planned
+    purpose: Represents guest or BYOD traffic that must not reach internal paths.
+    current_reference: labs/01-network-segmentation-trust-boundaries/flows.md
+  - id: branch-local-service
+    domain: network-security
+    site: branch-a
+    zone: branch-service
+    status: planned
+    purpose: Represents a restricted branch service dependency.
+    current_reference: labs/01-network-segmentation-trust-boundaries/flows.md
+  - id: hq-internal-app
+    domain: core-platform
+    site: hq
+    zone: hq-services
+    status: planned
+    purpose: Represents an HQ-hosted business application.
+    current_reference: labs/01-network-segmentation-trust-boundaries/flows.md
+  - id: hq-telemetry
+    domain: observability
+    site: hq
+    zone: hq-telemetry
+    status: partially_retained
+    purpose: Represents central event collection and search.
+    current_reference: observability/
+  - id: identity-placeholder
+    domain: identity-access
+    site: hq
+    zone: hq-services
+    status: planned
+    purpose: Represents authentication and authorization dependency.
+    current_reference: docs/threat-model.md
+  - id: cloud-public-app
+    domain: cloud-security
+    site: cloud
+    zone: cloud-public
+    status: planned
+    purpose: Represents an approved public or cloud service dependency.
+    current_reference: labs/01-network-segmentation-trust-boundaries/flows.md
+  - id: meridian-detect
+    domain: detection-engineering
+    site: developer-workstation
+    zone: tooling
+    status: scaffolded
+    purpose: Local detection validation, enrichment, and reporting CLI.
+    current_reference: tools/meridian-detect/
+  - id: quickwit
+    domain: observability
+    site: hq
+    zone: hq-telemetry
+    status: retained
+    purpose: Searchable event backend configuration.
+    current_reference: observability/quickwit/quickwit.yaml
+  - id: vector
+    domain: observability
+    site: hq
+    zone: hq-telemetry
+    status: retained
+    purpose: Event routing pipeline configuration.
+    current_reference: observability/otel/vector.yaml
+  - id: fluent-bit
+    domain: observability
+    site: hq
+    zone: hq-telemetry
+    status: retained
+    purpose: Log forwarding configuration.
+    current_reference: observability/otel/fluent-bit.conf
+  - id: victoriametrics
+    domain: observability
+    site: hq
+    zone: hq-telemetry
+    status: retained
+    purpose: Metrics collection configuration.
+    current_reference: observability/victoriametrics/prometheus.yml
+  - id: vault
+    domain: identity-access
+    site: hq
+    zone: hq-services
+    status: retained_reference
+    purpose: Existing secret-management reference service, not a full IdP.
+    current_reference: onprem/vault/config/vault.hcl

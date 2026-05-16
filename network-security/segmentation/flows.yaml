@@ -1,0 +1,176 @@
+schema_version: "0.1"
+source_document: labs/01-network-segmentation-trust-boundaries/flows.md
+status: initial_contract
+description: >
+  Structured segmentation flow intent for the first MERIDIAN LABS local
+  enterprise topology. This preserves the original Branch A, HQ, telemetry, and
+  cloud/public flow intent. It does not implement firewall, Docker network, VPN,
+  or routing behavior yet.
+
+zones:
+  - id: branch-employee-client
+    name: Branch employee client
+    trust_level: trusted_branch_user
+    purpose: Represents a managed employee workstation or user workload.
+  - id: branch-guest-client
+    name: Branch guest client
+    trust_level: untrusted_local_user
+    purpose: Represents guest or BYOD traffic that must not reach internal branch services.
+  - id: branch-local-service
+    name: Branch local service
+    trust_level: restricted_branch_service
+    purpose: Represents a small office dependency such as a local file, print, or utility service.
+  - id: hq-internal-app
+    name: HQ internal app
+    trust_level: internal_service
+    purpose: Represents an HQ-hosted business application reachable by approved branch users.
+  - id: hq-telemetry
+    name: Telemetry placeholder
+    trust_level: restricted_infrastructure
+    purpose: Represents central log or event collection.
+  - id: cloud-public-app
+    name: Cloud/public placeholder
+    trust_level: external_dependency
+    purpose: Represents a public app or cloud service dependency.
+  - id: branch-b-zones
+    name: Branch B zones
+    trust_level: not_in_initial_scope
+    purpose: Deferred until the Branch A pattern is validated.
+
+flows:
+  - id: A1
+    source_zone: branch-employee-client
+    destination_zone: branch-local-service
+    protocol: tcp
+    port: 80
+    action: allow
+    service: HTTP or TCP health endpoint
+    rationale: Employees need approved access to a local branch service.
+    telemetry_required: true
+    validation_status: planned
+    initial_validation: Employee client receives a successful response from the local service.
+  - id: A2
+    source_zone: branch-employee-client
+    destination_zone: hq-internal-app
+    protocol: tcp
+    port: 80
+    action: allow
+    service: HTTP or TCP health endpoint
+    rationale: Employees need approved access to an HQ business service.
+    telemetry_required: true
+    validation_status: planned
+    initial_validation: Employee client receives a successful response from the HQ placeholder.
+  - id: A3
+    source_zone: branch-local-service
+    destination_zone: hq-telemetry
+    protocol: tcp
+    port: 24224
+    action: allow
+    service: log/event submission placeholder
+    rationale: Local service should be able to emit telemetry centrally.
+    telemetry_required: true
+    validation_status: planned
+    initial_validation: Local service can send a single local test event or health payload.
+  - id: A4
+    source_zone: hq-internal-app
+    destination_zone: cloud-public-app
+    protocol: tcp
+    port: 80
+    action: allow
+    service: HTTP health endpoint
+    rationale: HQ services may depend on an approved public/cloud endpoint.
+    telemetry_required: true
+    validation_status: planned
+    initial_validation: HQ app receives a successful response from the cloud placeholder.
+  - id: D1
+    source_zone: branch-guest-client
+    destination_zone: branch-employee-client
+    protocol: tcp
+    port: any
+    action: deny
+    expected_result: blocked or no route
+    rationale: Guest traffic must not reach employee systems.
+    telemetry_required: true
+    validation_status: planned
+    initial_validation: Guest client cannot connect to an employee placeholder endpoint.
+  - id: D2
+    source_zone: branch-guest-client
+    destination_zone: branch-local-service
+    protocol: tcp
+    port: any
+    action: deny
+    expected_result: blocked or no route
+    rationale: Guest traffic must not reach restricted branch services by default.
+    telemetry_required: true
+    validation_status: planned
+    initial_validation: Guest client cannot connect to the local service endpoint.
+  - id: D3
+    source_zone: branch-guest-client
+    destination_zone: hq-internal-app
+    protocol: tcp
+    port: any
+    action: deny
+    expected_result: blocked or no route
+    rationale: Guest traffic should not inherit branch employee trust.
+    telemetry_required: true
+    validation_status: planned
+    initial_validation: Guest client cannot connect to the HQ app endpoint.
+  - id: D4
+    source_zone: branch-employee-client
+    destination_zone: hq-telemetry
+    protocol: tcp
+    port: management
+    action: deny
+    expected_result: blocked or no route
+    rationale: Telemetry infrastructure management should not be exposed to branch clients.
+    telemetry_required: true
+    validation_status: planned
+    initial_validation: Employee client cannot reach a management/admin placeholder port.
+  - id: D5
+    source_zone: branch-local-service
+    destination_zone: branch-employee-client
+    protocol: tcp
+    port: any
+    action: deny
+    expected_result: blocked or no route
+    rationale: Local service compromise should not create a path back to employee systems.
+    telemetry_required: true
+    validation_status: planned
+    initial_validation: Local service cannot initiate a connection to employee placeholder endpoint.
+  - id: D6
+    source_zone: branch-a-zones
+    destination_zone: branch-b-zones
+    protocol: any
+    port: any
+    action: deny
+    expected_result: absent or blocked
+    rationale: Branch-to-branch lateral access should not exist in the first lab.
+    telemetry_required: true
+    validation_status: planned
+    initial_validation: No Branch B network exists yet; later validation should show blocked transit.
+
+validation_plan:
+  minimum_evidence:
+    - A1
+    - A2
+    - D1
+    - D2
+  evidence_fields:
+    - command_run
+    - expected_result
+    - actual_result
+    - conclusion
+    - limitation
+
+assumptions:
+  - The first implementation will be local-only.
+  - Docker Compose networks are acceptable for the first topology unless a blocker appears.
+  - Service placeholders can be simple health endpoints.
+  - The first lab models reachability and segmentation intent, not production firewall feature parity.
+  - No real credentials, customer data, or external targets are used.
+
+limitations:
+  - Docker networks model local isolation, not a production branch firewall.
+  - Container DNS and bridge networking may behave differently from routed office networks.
+  - A blocked path in Docker proves lab policy intent, not enterprise-grade enforcement.
+  - Host access must be reviewed separately; lab containers should not expose developer workstation services.

@@ -1,5 +1,9 @@
 # Repository Structure
 
+MERIDIAN LABS is being reframed into a modular enterprise security
+infrastructure simulation platform. Existing implementation directories are
+preserved while new architecture-driven module scaffolds are introduced.
+
 ```text
 MERIDIAN/
 ├── .github/
@@ -8,44 +12,53 @@ MERIDIAN/
 │       ├── lint.yml                # Python lint, type checks, and tests
 │       ├── trivy-scan.yml          # Trivy filesystem, image, and config scans
 │       └── validate-manifests.yml  # YAML validation
+├── core-platform/                  # Initial enterprise substrate contracts
+│   ├── topology/                   # Local enterprise topology contract
+│   ├── services/                   # Service catalog contract
+│   ├── networks/                   # Network and zone catalog contract
+│   └── validation/                 # Shared validation expectations
+├── network-security/               # Segmentation and connectivity modules
+│   ├── segmentation/
+│   │   └── flows.yaml              # Structured segmentation flow contract
+│   └── connectivity/
+├── container-platform/             # Planned container/Kubernetes operations domain
+├── cloud-security/                 # Planned cloud security baseline domain
+├── identity-access/                # Planned identity and access domain
+├── detection-engineering/          # Detection content and sample-event scaffolds
+│   ├── detections/
+│   ├── reports/
+│   └── sample-events/
+├── incident-response/              # Runbook and scenario scaffolds
+│   ├── runbooks/
+│   └── scenarios/
 ├── docs/
-│   ├── architecture.md             # MERIDIAN LABS distributed office model
+│   ├── architecture.md             # Distributed enterprise model
 │   ├── design-decisions.md         # Repo audit and pivot decisions
-│   ├── interview-positioning.md    # Senior-role discussion guide
-│   ├── learning-map.md             # Retained v2 learning map
-│   ├── roadmap.md                  # Phased lab roadmap
+│   ├── interview-positioning.md    # Development note, not source of truth
+│   ├── learning-map.md             # Development note, not source of truth
+│   ├── roadmap.md                  # Phased planning context
 │   ├── threat-model.md             # Initial threat model
 │   └── runbooks/
-│       └── README.md               # Planned operational runbooks
+│       └── README.md               # Legacy/planned operational runbook notes
 ├── diagrams/
 │   └── README.md                   # Placeholder for reviewed lab diagrams
-├── labs/
-│   ├── 01-network-segmentation/    # Segmentation learning task
-│   ├── 02-secure-connectivity/     # Branch-to-HQ connectivity learning task
-│   ├── 03-host-hardening/          # Hardening learning task
-│   ├── 04-telemetry-detection/     # Retained v2 telemetry/detection path
-│   ├── 05-policy-as-code/          # Policy check learning task
+├── labs/                           # Legacy/current guided-lab content
+│   ├── 01-network-segmentation-trust-boundaries/
+│   ├── 02-secure-connectivity-remote-access/
+│   ├── 03-host-hardening-baseline-enforcement/
+│   ├── 04-telemetry-detection-response/
+│   ├── 05-policy-as-code-automated-validation/
 │   └── README.md
-├── observability/
+├── observability/                  # Retained telemetry configs and schema scaffold
+│   ├── schemas/
 │   ├── quickwit/
-│   │   └── quickwit.yaml           # Searchable event backend config
 │   ├── otel/
-│   │   ├── fluent-bit.conf         # Legacy log forwarding config
-│   │   └── vector.yaml             # Event/log routing config
 │   └── victoriametrics/
-│       └── prometheus.yml          # Legacy metrics scrape config
-├── onprem/
-│   ├── docker-compose.yml          # Legacy Compose lab
-│   ├── nginx/nginx.conf            # Legacy TLS reverse proxy config
-│   ├── node-exporter/web.yml       # Legacy Node Exporter TLS config
-│   └── vault/config/vault.hcl      # Legacy Vault config
-├── security/
-│   ├── README.md                   # Active security scope
-│   └── trivy/
-│       ├── README.md
-│       └── trivy.yaml
+├── onprem/                         # Existing Compose/Vault/Nginx reference material
+├── security/                       # Security tooling docs and Trivy config
+├── scripts/                        # Existing helper scripts
 ├── tools/
-│   └── meridian-detect/            # Current Python CLI scaffold
+│   └── meridian-detect/            # Current Python detection CLI scaffold
 ├── README.md
 ├── SECURITY.md
 ├── RELEASE_NOTES.md
@@ -53,30 +66,35 @@ MERIDIAN/
 └── CHANGELOG.md
 ```
 
-## Active Scope
+## Active Platform Domains
 
-MERIDIAN LABS is focused on distributed office security architecture and
-implementation practice.
+- `core-platform/`: initial contracts for topology, services, networks, and
+  validation.
+- `network-security/`: segmentation and connectivity contracts.
+- `observability/`: retained telemetry pipeline configuration and event schemas.
+- `detection-engineering/`: sample events, detection scaffolds, and report
+  scaffolds.
+- `incident-response/`: initial scenario and runbook scaffolds.
 
-Active areas:
+## Planned Platform Domains
 
-- architecture and threat-model documentation
-- branch, HQ, and cloud lab design
-- security scanning CI
-- retained Quickwit and event-routing configuration
-- retained Python CLI scaffold for telemetry/detection workflow commands
+- `container-platform/`: Kubernetes and container platform operations.
+- `cloud-security/`: cloud security baselines and policy validation.
+- `identity-access/`: users, roles, service identities, access policy, and audit
+  events.
 
-Planned active areas:
+## Preserved Compatibility Areas
 
-- topology and segmentation lab
-- secure connectivity lab
-- host hardening lab
-- telemetry and detection lab
-- policy-as-code lab
-- incident-response scenarios
+The following existing directories are intentionally left in place during this
+phase:
 
-## Archived Scope
+- `observability/`
+- `onprem/`
+- `tools/`
+- `labs/`
+- `security/`
+- `scripts/`
+- `.github/`
 
-Earlier platform-era concepts were archived in the
-`meridian-v1-platform-archive` Git tag. They are not part of the default branch
-because they do not support the MERIDIAN LABS scope.
+`labs/` remains legacy/current guided-lab content and migration source material.
+It is not the long-term platform architecture source of truth.

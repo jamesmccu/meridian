@@ -1,0 +1,57 @@
+schema_version: "0.1"
+status: initial_contract
+description: >
+  Initial network and trust-zone catalog for MERIDIAN LABS. CIDR values are
+  documentation placeholders unless an implementation explicitly binds them.
+
+zones:
+  - id: branch-employee
+    site: branch-a
+    trust_level: trusted_branch_user
+    placeholder_cidr: 10.10.10.0/24
+    purpose: Managed employee client access to approved local, HQ, and cloud paths.
+  - id: branch-guest
+    site: branch-a
+    trust_level: untrusted_local_user
+    placeholder_cidr: 10.10.20.0/24
+    purpose: Guest or BYOD access with no internal reachability by default.
+  - id: branch-service
+    site: branch-a
+    trust_level: restricted_branch_service
+    placeholder_cidr: 10.10.30.0/24
+    purpose: Local branch services reachable only through explicit allow rules.
+  - id: hq-admin
+    site: hq
+    trust_level: privileged_admin
+    placeholder_cidr: 10.20.10.0/24
+    purpose: Administrative access path for platform operators.
+  - id: hq-services
+    site: hq
+    trust_level: internal_service
+    placeholder_cidr: 10.20.20.0/24
+    purpose: Internal applications, identity dependencies, and control-plane services.
+  - id: hq-telemetry
+    site: hq
+    trust_level: restricted_infrastructure
+    placeholder_cidr: 10.20.30.0/24
+    purpose: Central telemetry ingestion, storage, and analysis.
+  - id: cloud-public
+    site: cloud
+    trust_level: external_dependency
+    placeholder_cidr: 10.30.10.0/24
+    purpose: Local placeholder for approved public or cloud dependencies.
+  - id: developer-host
+    site: local
+    trust_level: out_of_scope_host
+    placeholder_cidr: null
+    purpose: Workstation running the lab; should not be broadly exposed to workloads.
+
+default_policy:
+  action: deny
+  rationale: Explicit allow-list flows should define all permitted reachability.
+
+implementation_notes:
+  - Existing Docker Compose networks remain in `onprem/` until migrated.
+  - Docker network isolation is acceptable for early validation evidence, but it
+    does not prove production firewall parity.
+  - Management interfaces should only be reachable from admin paths.

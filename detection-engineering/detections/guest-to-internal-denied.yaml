@@ -1,0 +1,28 @@
+schema_version: "0.1"
+id: guest-to-internal-denied
+name: Guest traffic denied to internal zone
+status: initial_working_slice
+severity: medium
+description: >
+  Detects a validated sample event where guest-originated traffic is denied by
+  the network segmentation contract while attempting to reach an internal branch
+  or HQ destination.
+match:
+  event_type: network_flow
+  source_zone: branch-guest-client
+  destination_zones:
+    - branch-employee-client
+    - branch-local-service
+    - hq-internal-app
+  action: deny
+  flow_ids:
+    - D1
+    - D2
+    - D3
+finding:
+  title: Guest-originated access denied to internal service
+  response_runbook: incident-response/runbooks/segmentation-violation.md
+  scenario: incident-response/scenarios/guest-to-internal-access/README.md
+limitations:
+  - This rule currently validates repository sample events only.
+  - It is not connected to a running network topology or telemetry pipeline yet.

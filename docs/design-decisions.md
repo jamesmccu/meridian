@@ -15,7 +15,7 @@ runtime detection positioning:
 | `observability/` | Quickwit, Vector, Fluent Bit, VictoriaMetrics config | Preserve as future telemetry/detection lab material. |
 | `onprem/` | Docker Compose, Vault, Nginx, Node Exporter config | Preserve as reference material; do not expand until a lab needs it. |
 | `security/` | Trivy docs and config | Preserve as repository hygiene and future policy-as-code input. |
-| `tools/meridian-detect/` | Python CLI scaffold and tests | Preserve for the future `04-telemetry-detection` module. |
+| `tools/meridian-detect/` | Python CLI scaffold and tests | Preserve for the future `04-telemetry-detection-response` module. |
 | `.github/workflows/` | build/sign, lint, Trivy scan, YAML validation | Preserve existing CI; add new checks only when useful. |
 
 ## Decision: Keep The Repo Name MERIDIAN
@@ -35,7 +35,7 @@ telemetry, detection, policy checks, and incident readiness.
 
 The v2 material should not be deleted. Quickwit, Vector, Fluent Bit, Trivy, and
 `meridian-detect` remain useful for telemetry and detection. They are retained as
-future inputs to `labs/04-telemetry-detection/`.
+future inputs to `labs/04-telemetry-detection-response/`.
 
 ## Decision: Documentation First, Implementation Second
 
@@ -50,6 +50,24 @@ Implementation should follow the learning guardrail:
 - The repo owner implements the first hardening playbook.
 - The repo owner implements the first parser/correlator.
 - The repo owner implements the first policy check.
+
+## Decision: Use Problem-Driven Lab Names
+
+The lab folders use problem-driven names instead of generic topic labels. This
+keeps the project framed as security engineering work rather than study
+material.
+
+Current lab names:
+
+- `01-network-segmentation-trust-boundaries`
+- `02-secure-connectivity-remote-access`
+- `03-host-hardening-baseline-enforcement`
+- `04-telemetry-detection-response`
+- `05-policy-as-code-automated-validation`
+
+The names are intentionally agnostic. They map to real control families and
+senior security engineering responsibilities without tying the project to one
+company, vendor, or training track.
 
 ## Decision: Local-First Tooling
 

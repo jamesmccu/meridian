@@ -1,0 +1,24 @@
+Command:
+  .venv/bin/meridian-detect validate
+
+Expected result:
+  The command validates network-security/segmentation/flows.yaml, validates the
+  sample event against observability/schemas/meridian-event.schema.json, matches
+  the event to deny flow D2, and matches the guest-to-internal detection rule.
+
+Output:
+  {
+    "event_id": "evt-denied-guest-access-001",
+    "finding": "Guest traffic denied to internal zone",
+    "matched_flow": "D2",
+    "matched_rule": "guest-to-internal-denied",
+    "status": "ok"
+  }
+
+Conclusion:
+  The repository artifacts form a working validation and detection path for the
+  guest-to-internal denied-access sample event.
+
+Limitation:
+  This is repository evidence only. No running topology currently generates this
+  event.

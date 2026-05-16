@@ -1,5 +1,8 @@
 # Learning Map
 
+> Development note: this document is retained as learning and implementation
+> planning context. It is not the platform architecture source of truth.
+
 MERIDIAN LABS is optimized for practical security architecture and engineering
 practice across distributed branch offices, HQ services, and cloud dependencies.
 

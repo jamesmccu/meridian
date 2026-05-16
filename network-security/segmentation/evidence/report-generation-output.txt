@@ -1,0 +1,16 @@
+Command:
+  .venv/bin/meridian-detect report
+
+Expected result:
+  The command validates the same flow, schema, event, and detection rule path,
+  then writes the operational report artifact.
+
+Output:
+  wrote report: detection-engineering/reports/guest-to-internal-access-report.md
+
+Conclusion:
+  The detection report can be regenerated from the current repository artifacts.
+
+Limitation:
+  The generated report summarizes sample data and contract matching, not live
+  network enforcement.
